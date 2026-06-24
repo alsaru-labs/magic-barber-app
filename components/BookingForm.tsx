@@ -284,12 +284,14 @@ export default function BookingForm() {
                   </Label>
                   
                   <Dialog>
-                    <DialogTrigger asChild>
-                      <button className="inline-flex items-center gap-1 text-xs text-primary font-bold hover:underline bg-transparent border-0 cursor-pointer py-1 px-2 rounded-full hover:bg-primary/5 transition-all">
-                        <CalendarDays className="w-3.5 h-3.5" />
-                        Ver calendario
-                      </button>
-                    </DialogTrigger>
+                    <DialogTrigger
+                      render={
+                        <button className="inline-flex items-center gap-1 text-xs text-primary font-bold hover:underline bg-transparent border-0 cursor-pointer py-1 px-2 rounded-full hover:bg-primary/5 transition-all">
+                          <CalendarDays className="w-3.5 h-3.5" />
+                          Ver calendario
+                        </button>
+                      }
+                    />
                     <DialogContent className="bg-card border border-border p-4 max-w-sm rounded-3xl">
                       <DialogHeader>
                         <DialogTitle className="text-base font-bold text-foreground">Seleccionar Fecha</DialogTitle>
