@@ -49,68 +49,68 @@
 }
 
 :root {
-  --background: #f8fafd; /* Clean soft blue-grey */
-  --foreground: #1f1f1f; /* Google primary text */
-  --card: #ffffff; /* Card surface */
-  --card-foreground: #1f1f1f;
+  --background: #FAF9F5; /* Premium warm alabaster */
+  --foreground: #1C1917; /* Deep stone charcoal */
+  --card: #ffffff; /* Pure white card */
+  --card-foreground: #1C1917;
   --popover: #ffffff;
-  --popover-foreground: #1f1f1f;
-  --primary: #0b57d0; /* Google Primary Blue */
+  --popover-foreground: #1C1917;
+  --primary: #9F7E50; /* Elegant classic bronze-gold */
   --primary-foreground: #ffffff;
-  --secondary: #f0f4f9; /* Google container fill */
-  --secondary-foreground: #1f1f1f;
-  --muted: #f1f3f4;
-  --muted-foreground: #5f6368; /* Google secondary text */
-  --accent: #e8f0fe; /* Google active fill */
-  --accent-foreground: #0b57d0;
-  --destructive: #d93025; /* Google Red */
+  --secondary: #F5F3EF; /* Soft warm sand */
+  --secondary-foreground: #1C1917;
+  --muted: #F0EDE6; /* Slightly darker warm sand */
+  --muted-foreground: #78716C; /* Muted stone taupe */
+  --accent: #F5F0E6; /* Light cream gold */
+  --accent-foreground: #8A6635; /* Darker gold text */
+  --destructive: #AF3A30; /* Sophisticated deep red */
   --destructive-foreground: #ffffff;
-  --border: #dde3ea; /* Soft border */
-  --input: #dde3ea;
-  --ring: #0b57d0;
-  --radius: 1.25rem; /* Round Material Design 3 style */
+  --border: #E7E2D8; /* Soft warm border */
+  --input: #E7E2D8;
+  --ring: #9F7E50;
+  --radius: 1.5rem; /* Extra large rounded corners per Material Design 3 */
   
   /* Sidebar styles */
   --sidebar: #ffffff;
-  --sidebar-foreground: #1f1f1f;
-  --sidebar-primary: #0b57d0;
+  --sidebar-foreground: #1C1917;
+  --sidebar-primary: #9F7E50;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f0f4f9;
-  --sidebar-accent-foreground: #0b57d0;
-  --sidebar-border: #dde3ea;
-  --sidebar-ring: #0b57d0;
+  --sidebar-accent: #F5F3EF;
+  --sidebar-accent-foreground: #9F7E50;
+  --sidebar-border: #E7E2D8;
+  --sidebar-ring: #9F7E50;
 }
 
 .dark {
-  --background: #1f1f20; /* Google dark theme dark grey */
-  --foreground: #e3e3e3;
-  --card: #2d2f31; /* Google dark surface */
-  --card-foreground: #e3e3e3;
-  --popover: #2d2f31;
-  --popover-foreground: #e3e3e3;
-  --primary: #a8c7fa; /* Google light blue in dark mode */
-  --primary-foreground: #0b57d0;
-  --secondary: #2b2d30;
-  --secondary-foreground: #e3e3e3;
-  --muted: #3c4043;
-  --muted-foreground: #c4c7c5;
-  --accent: #3c4043;
-  --accent-foreground: #a8c7fa;
-  --destructive: #f28b82;
-  --destructive-foreground: #121212;
-  --border: #444746;
-  --input: #444746;
-  --ring: #a8c7fa;
+  --background: #0B0C0E; /* Deep rich obsidian black */
+  --foreground: #F5F5F7; /* Sleek light silver/white */
+  --card: #14161B; /* Charcoal obsidian elevated card */
+  --card-foreground: #F5F5F7;
+  --popover: #14161B;
+  --popover-foreground: #F5F5F7;
+  --primary: #D8B273; /* Warm metallic gold/brass */
+  --primary-foreground: #141008; /* High contrast dark text on gold */
+  --secondary: #1D2026; /* Deep charcoal slate */
+  --secondary-foreground: #F5F5F7;
+  --muted: #1D2026;
+  --muted-foreground: #8E929B; /* Muted silver-grey */
+  --accent: #2C261D; /* Deep warm gold highlight tint */
+  --accent-foreground: #D8B273;
+  --destructive: #CF554C; /* Deep warm red */
+  --destructive-foreground: #ffffff;
+  --border: #2A2D35; /* Subtle dark border */
+  --input: #2A2D35;
+  --ring: #D8B273;
   
   /* Sidebar dark styles */
-  --sidebar: #2d2f31;
-  --sidebar-foreground: #e3e3e3;
-  --sidebar-primary: #a8c7fa;
-  --sidebar-primary-foreground: #0b57d0;
-  --sidebar-accent: #3c4043;
-  --sidebar-accent-foreground: #a8c7fa;
-  --sidebar-border: #444746;
-  --sidebar-ring: #a8c7fa;
+  --sidebar: #14161B;
+  --sidebar-foreground: #F5F5F7;
+  --sidebar-primary: #D8B273;
+  --sidebar-primary-foreground: #141008;
+  --sidebar-accent: #1D2026;
+  --sidebar-accent-foreground: #D8B273;
+  --sidebar-border: #2A2D35;
+  --sidebar-ring: #D8B273;
 }
 
 @layer base {

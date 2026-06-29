@@ -16,7 +16,8 @@ import {
   Clock3,
   CalendarCheck,
   CalendarX,
-  Loader2
+  Loader2,
+  User
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -36,7 +37,9 @@ export default function AdminCalendar() {
     selectedDate,
     setSelectedDate,
     appointments,
+    barbers,
     isLoading,
+    isLoadingBarbers,
     selectedAppt,
     isDialogOpen,
     setIsDialogOpen,
@@ -44,6 +47,7 @@ export default function AdminCalendar() {
     errorMsg,
     fetchAppointments, // loadAppointments mapped or renamed
     handleUpdateStatus,
+    handleReassignBarber,
     getLocalTime,
     handleOpenDialog,
     totalCount,
@@ -55,11 +59,11 @@ export default function AdminCalendar() {
   const getStatusBadge = (estado: string) => {
     switch (estado) {
       case "confirmada":
-        return <span className="px-2.5 py-1 text-[10px] font-bold uppercase rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-950/20 dark:text-emerald-400 border border-emerald-250/20">Confirmada</span>;
+        return <span className="px-2.5 py-1 text-[9px] font-extrabold uppercase rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 tracking-wider">Confirmada</span>;
       case "cancelada":
-        return <span className="px-2.5 py-1 text-[10px] font-bold uppercase rounded-full bg-red-50 text-red-600 dark:bg-red-950/20 dark:text-red-400 border border-red-250/20">Cancelada</span>;
+        return <span className="px-2.5 py-1 text-[9px] font-extrabold uppercase rounded-full bg-destructive/10 text-destructive border border-destructive/20 tracking-wider">Cancelada</span>;
       default:
-        return <span className="px-2.5 py-1 text-[10px] font-bold uppercase rounded-full bg-amber-50 text-amber-600 dark:bg-amber-950/20 dark:text-amber-400 border border-amber-250/20">Pendiente</span>;
+        return <span className="px-2.5 py-1 text-[9px] font-extrabold uppercase rounded-full bg-primary/10 text-primary border border-primary/20 tracking-wider">Pendiente</span>;
     }
   };
 
@@ -70,55 +74,55 @@ export default function AdminCalendar() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-foreground font-heading">Panel de Reservas</h2>
-          <p className="text-muted-foreground text-xs md:text-sm">Gestiona el horario diario y los estados de reserva de tus clientes.</p>
+          <p className="text-muted-foreground text-xs md:text-sm">Administra las citas diarias, confirma solicitudes y reasigna barberos.</p>
         </div>
       </div>
 
-      {/* Stats Summary Cards (Google Widgets Style) */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-card border-border shadow-sm rounded-2xl overflow-hidden">
+      {/* Overview Stats (M3 widgets style) */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Card className="bg-card border-border/80 shadow-sm rounded-2xl overflow-hidden hover:shadow-md transition-shadow">
           <CardContent className="p-4 flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Total hoy</p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Total Citas</p>
               <h4 className="text-2xl font-extrabold text-foreground mt-1 font-heading">{totalCount}</h4>
             </div>
-            <div className="p-2.5 bg-secondary text-muted-foreground rounded-full">
+            <div className="p-2.5 bg-primary/15 text-primary rounded-xl">
               <TrendingUp className="w-4 h-4" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-card border-border shadow-sm rounded-2xl overflow-hidden">
+        <Card className="bg-card border-border/80 shadow-sm rounded-2xl overflow-hidden hover:shadow-md transition-shadow">
           <CardContent className="p-4 flex items-center justify-between">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Pendientes</p>
-              <h4 className="text-2xl font-extrabold text-amber-600 dark:text-amber-450 mt-1 font-heading">{pendingCount}</h4>
+              <h4 className="text-2xl font-extrabold text-primary mt-1 font-heading">{pendingCount}</h4>
             </div>
-            <div className="p-2.5 bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 rounded-full">
+            <div className="p-2.5 bg-primary/10 text-primary rounded-xl">
               <Clock3 className="w-4 h-4" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-card border-border shadow-sm rounded-2xl overflow-hidden">
+        <Card className="bg-card border-border/80 shadow-sm rounded-2xl overflow-hidden hover:shadow-md transition-shadow">
           <CardContent className="p-4 flex items-center justify-between">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Confirmadas</p>
               <h4 className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-450 mt-1 font-heading">{confirmedCount}</h4>
             </div>
-            <div className="p-2.5 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 rounded-full">
+            <div className="p-2.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-450 rounded-xl">
               <CalendarCheck className="w-4 h-4" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-card border-border shadow-sm rounded-2xl overflow-hidden">
+        <Card className="bg-card border-border/80 shadow-sm rounded-2xl overflow-hidden hover:shadow-md transition-shadow">
           <CardContent className="p-4 flex items-center justify-between">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Canceladas</p>
-              <h4 className="text-2xl font-extrabold text-red-600 dark:text-red-450 mt-1 font-heading">{cancelledCount}</h4>
+              <h4 className="text-2xl font-extrabold text-destructive mt-1 font-heading">{cancelledCount}</h4>
             </div>
-            <div className="p-2.5 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 rounded-full">
+            <div className="p-2.5 bg-destructive/10 text-destructive rounded-xl">
               <CalendarX className="w-4 h-4" />
             </div>
           </CardContent>
@@ -196,10 +200,16 @@ export default function AdminCalendar() {
                       {/* Client & Service Info */}
                       <div className="space-y-0.5">
                         <h4 className="font-bold text-foreground text-sm font-heading">{appt.nombre} {appt.apellidos}</h4>
-                        <p className="text-xs text-muted-foreground flex items-center gap-1.5 font-medium">
-                          <Scissors className="w-3.5 h-3.5 text-primary/70" />
-                          {appt.servicio}
-                        </p>
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground font-medium">
+                          <span className="flex items-center gap-1.5">
+                            <Scissors className="w-3.5 h-3.5 text-primary/70" />
+                            {appt.servicio}
+                          </span>
+                          <span className="flex items-center gap-1.5 border-l border-border/60 pl-3">
+                            <User className="w-3.5 h-3.5 text-primary/70" />
+                            {appt.peluqueros?.nombre || "Sin Asignar"}
+                          </span>
+                        </div>
                       </div>
                     </div>
 
@@ -246,6 +256,24 @@ export default function AdminCalendar() {
                   </span>
                 </div>
                 <div className="grid grid-cols-3 gap-2">
+                  <span className="text-muted-foreground font-bold uppercase tracking-wider text-[10px] mt-0.5">Peluquero:</span>
+                  <div className="col-span-2">
+                    <select
+                      value={selectedAppt.peluquero_id || ""}
+                      onChange={(e) => handleReassignBarber(selectedAppt.id, e.target.value)}
+                      disabled={isUpdating}
+                      className="w-full bg-secondary/80 border border-border text-foreground text-xs font-semibold py-1.5 px-2.5 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary/40 focus:border-primary/50"
+                    >
+                      <option value="" disabled>Seleccionar Peluquero</option>
+                      {barbers.map((b: any) => (
+                        <option key={b.id} value={b.id}>
+                          {b.nombre} {!b.activo && "(Inactivo)"}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-2">
                   <span className="text-muted-foreground font-bold uppercase tracking-wider text-[10px] mt-0.5">Teléfono:</span>
                   <span className="col-span-2 font-semibold text-foreground flex items-center gap-1.5">
                     <Phone className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
@@ -273,7 +301,7 @@ export default function AdminCalendar() {
                     const message = `Hola ${selectedAppt.nombre}, te escribimos de Magic Barber sobre tu cita para ${selectedAppt.servicio}...`;
                     window.open(`https://wa.me/${selectedAppt.telefono_whatsapp}?text=${encodeURIComponent(message)}`, "_blank");
                   }}
-                  className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold gap-2 py-5 rounded-xl flex-1 text-xs"
+                  className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold gap-2 py-5 rounded-xl flex-1 text-xs cursor-pointer"
                 >
                   <MessageSquare className="w-4 h-4 fill-current" />
                   Abrir WhatsApp
@@ -286,7 +314,7 @@ export default function AdminCalendar() {
                       variant="outline"
                       disabled={isUpdating}
                       onClick={() => handleUpdateStatus(selectedAppt.id, "cancelada")}
-                      className="border-border text-red-600 hover:bg-red-50 hover:text-white hover:border-red-500 font-bold py-5 rounded-xl flex-1 bg-transparent text-xs"
+                      className="border-border text-destructive hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 font-bold py-5 rounded-xl flex-1 bg-transparent text-xs cursor-pointer"
                     >
                       <X className="w-4 h-4 mr-1.5" />
                       Cancelar
@@ -298,7 +326,7 @@ export default function AdminCalendar() {
                     <Button
                       disabled={isUpdating}
                       onClick={() => handleUpdateStatus(selectedAppt.id, "confirmada")}
-                      className="bg-primary hover:bg-primary/95 text-white font-bold py-5 rounded-xl flex-1 text-xs"
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-5 rounded-xl flex-1 text-xs cursor-pointer"
                     >
                       <Check className="w-4 h-4 mr-1.5" />
                       Confirmar

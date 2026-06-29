@@ -3,11 +3,14 @@
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { fetchAppointmentsForDate, updateAppointmentStatus } from "@/lib/services/appointments";
+import { fetchAdminBarbers } from "@/lib/services/barbers";
 
 export function useAdminCalendar() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [appointments, setAppointments] = useState<any[]>([]);
+  const [barbers, setBarbers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingBarbers, setIsLoadingBarbers] = useState(false);
   const [selectedAppt, setSelectedAppt] = useState<any | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -30,9 +33,26 @@ export function useAdminCalendar() {
     }
   };
 
+  // Fetch barbers list on mount
+  const loadBarbers = async () => {
+    setIsLoadingBarbers(true);
+    try {
+      const data = await fetchAdminBarbers();
+      setBarbers(data);
+    } catch (err: any) {
+      console.error("Error loading barbers in admin calendar:", err.message);
+    } finally {
+      setIsLoadingBarbers(false);
+    }
+  };
+
   useEffect(() => {
     fetchAppointments();
   }, [selectedDate]);
+
+  useEffect(() => {
+    loadBarbers();
+  }, []);
 
   // Update status wrapper
   const handleUpdateStatus = async (id: string, newStatus: string) => {
@@ -59,6 +79,35 @@ export function useAdminCalendar() {
     }
   };
 
+  // Reassign barber wrapper
+  const handleReassignBarber = async (appointmentId: string, newBarberId: string) => {
+    setIsUpdating(true);
+    setErrorMsg(null);
+    try {
+      await updateAppointmentStatus(appointmentId, undefined, newBarberId);
+      
+      if (selectedAppt && selectedAppt.id === appointmentId) {
+        const selectedBarber = barbers.find((b) => b.id === newBarberId);
+        setSelectedAppt((prev: any) => ({ 
+          ...prev, 
+          peluquero_id: newBarberId,
+          peluqueros: selectedBarber ? { nombre: selectedBarber.nombre } : null
+        }));
+      }
+
+      await fetchAppointments();
+    } catch (err: any) {
+      console.error("Error reassigning barber:", err.message);
+      if (err.code === "23505") {
+        setErrorMsg("Este peluquero ya tiene otra cita activa a esta misma hora.");
+      } else {
+        setErrorMsg(err.message || "Error al reasignar el peluquero.");
+      }
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   const getLocalTime = (isoString: string) => {
     const d = new Date(isoString);
     return format(d, "HH:mm");
@@ -79,7 +128,9 @@ export function useAdminCalendar() {
     selectedDate,
     setSelectedDate,
     appointments,
+    barbers,
     isLoading,
+    isLoadingBarbers,
     selectedAppt,
     setSelectedAppt,
     isDialogOpen,
@@ -89,6 +140,7 @@ export function useAdminCalendar() {
     setErrorMsg,
     fetchAppointments,
     handleUpdateStatus,
+    handleReassignBarber,
     getLocalTime,
     handleOpenDialog,
     totalCount,

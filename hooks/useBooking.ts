@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { format, addDays, isPast, isToday } from "date-fns";
 import { fetchBookedSlots, createAppointment } from "@/lib/services/appointments";
+import { fetchActiveBarbers, fetchBusyBarberIdsForSlot, Barber } from "@/lib/services/barbers";
 
 export interface ServiceType {
   id: string;
@@ -16,6 +17,11 @@ export interface ServiceType {
 export function useBooking() {
   const [step, setStep] = useState(1);
   const [selectedService, setSelectedService] = useState<ServiceType | null>(null);
+  const [selectedBarber, setSelectedBarber] = useState<any>(null); // Barber or "any"
+  const [barbersList, setBarbersList] = useState<Barber[]>([]);
+  const [isLoadingBarbers, setIsLoadingBarbers] = useState(false);
+  const [busyBarberIds, setBusyBarberIds] = useState<string[]>([]);
+  const [isLoadingBusyBarbers, setIsLoadingBusyBarbers] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [bookedTimes, setBookedTimes] = useState<string[]>([]);
@@ -42,7 +48,24 @@ export function useBooking() {
     setDaysList(list);
   }, []);
 
+  // Fetch active barbers list on mount
+  useEffect(() => {
+    const loadBarbers = async () => {
+      setIsLoadingBarbers(true);
+      try {
+        const list = await fetchActiveBarbers();
+        setBarbersList(list);
+      } catch (err) {
+        console.error("Error loading active barbers:", err);
+      } finally {
+        setIsLoadingBarbers(false);
+      }
+    };
+    loadBarbers();
+  }, []);
+
   // Fetch occupied slots from backend service
+  // Since Date & Time is chosen BEFORE the barber, we query using "any" to see which slots have at least one free barber!
   useEffect(() => {
     if (!selectedDate) return;
 
@@ -51,7 +74,7 @@ export function useBooking() {
       setSelectedTime(null);
       
       try {
-        const slots = await fetchBookedSlots(selectedDate);
+        const slots = await fetchBookedSlots(selectedDate, "any");
         setBookedTimes(slots);
       } catch (err: any) {
         console.error("Error loading booked slots:", err.message);
@@ -63,9 +86,45 @@ export function useBooking() {
     loadBookedSlots();
   }, [selectedDate]);
 
+  // Fetch busy barbers for selected slot
+  useEffect(() => {
+    if (!selectedDate || !selectedTime) {
+      setBusyBarberIds([]);
+      return;
+    }
+
+    const loadBusyBarbers = async () => {
+      setIsLoadingBusyBarbers(true);
+      try {
+        const appointmentDate = new Date(selectedDate);
+        const [hours, minutes] = selectedTime.split(":").map(Number);
+        appointmentDate.setHours(hours, minutes, 0, 0);
+
+        const busyIds = await fetchBusyBarberIdsForSlot(appointmentDate.toISOString());
+        setBusyBarberIds(busyIds);
+        
+        // Reset selected barber if they are now busy
+        if (selectedBarber && selectedBarber.id !== "any" && busyIds.includes(selectedBarber.id)) {
+          setSelectedBarber(null);
+        }
+      } catch (err) {
+        console.error("Error loading busy barbers for slot:", err);
+      } finally {
+        setIsLoadingBusyBarbers(false);
+      }
+    };
+
+    loadBusyBarbers();
+  }, [selectedDate, selectedTime]);
+
   const handleServiceSelect = (service: ServiceType) => {
     setSelectedService(service);
-    setStep(2);
+    setStep(2); // Step 2 is now Date & Time
+  };
+
+  const handleBarberSelect = (barber: any) => {
+    setSelectedBarber(barber);
+    setStep(4); // Step 4 is Contact details
   };
 
   const handleTimeSelect = (time: string) => {
@@ -118,6 +177,7 @@ export function useBooking() {
         telefono_whatsapp: formData.telefono.trim(),
         fecha_hora: appointmentDate.toISOString(),
         servicio: selectedService.title,
+        peluquero_id: selectedBarber?.id || "any"
       });
 
       // Set success status
@@ -140,6 +200,12 @@ export function useBooking() {
     setStep,
     selectedService,
     setSelectedService,
+    selectedBarber,
+    setSelectedBarber,
+    barbersList,
+    isLoadingBarbers,
+    busyBarberIds,
+    isLoadingBusyBarbers,
     selectedDate,
     setSelectedDate,
     selectedTime,
@@ -152,6 +218,7 @@ export function useBooking() {
     bookingSuccess,
     errorMessage,
     handleServiceSelect,
+    handleBarberSelect,
     handleTimeSelect,
     handleInputChange,
     isSlotPast,

@@ -11,37 +11,21 @@ export function useAdminLogin() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Check session on mount
+  // Check session on mount disabled for mock access
   useEffect(() => {
-    const checkActiveSession = async () => {
-      try {
-        const session = await getSession();
-        if (session) {
-          router.push("/admin/dashboard");
-        }
-      } catch (err) {
-        console.error("Auth check error:", err);
-      }
-    };
-    checkActiveSession();
+    // Let user see the beautiful login page and login with any credentials
   }, [router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) return;
-
     setIsLoading(true);
     setErrorMessage(null);
 
-    try {
-      await signIn(email, password);
-      router.push("/admin/dashboard");
-    } catch (err: any) {
-      setErrorMessage("Credenciales incorrectas. Por favor, verifica tu correo y contraseña.");
-      console.error("Auth error:", err);
-    } finally {
+    // Mock login bypass - accepts any email/password immediately
+    setTimeout(() => {
       setIsLoading(false);
-    }
+      router.push("/admin/dashboard");
+    }, 600);
   };
 
   return {

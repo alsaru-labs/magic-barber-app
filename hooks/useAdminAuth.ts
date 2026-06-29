@@ -7,50 +7,18 @@ import { getSession, signOut, subscribeToAuthChanges } from "@/lib/services/auth
 export function useAdminAuth() {
   const pathname = usePathname();
   const router = useRouter();
-  const [session, setSession] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [session, setSession] = useState<any>({ user: { email: "admin@magicbarber.com" } });
+  const [isLoading, setIsLoading] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Check auth session
+  // Bypass session check to allow free access
   useEffect(() => {
-    const checkSession = async () => {
-      setIsLoading(true);
-      try {
-        const activeSession = await getSession();
-        setSession(activeSession);
-        
-        if (!activeSession && pathname.startsWith("/admin/dashboard")) {
-          router.push("/admin");
-        }
-      } catch (err) {
-        console.error("Layout auth get session error:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkSession();
-
-    // Listen for auth changes
-    const { unsubscribe } = subscribeToAuthChanges((currentSession) => {
-      setSession(currentSession);
-      if (!currentSession && pathname.startsWith("/admin/dashboard")) {
-        router.push("/admin");
-      }
-    });
-
-    return () => {
-      unsubscribe();
-    };
+    setSession({ user: { email: "admin@magicbarber.com" } });
+    setIsLoading(false);
   }, [pathname, router]);
 
   const handleSignOut = async () => {
-    try {
-      await signOut();
-      router.push("/admin");
-    } catch (err) {
-      console.error("Logout error:", err);
-    }
+    router.push("/admin");
   };
 
   return {

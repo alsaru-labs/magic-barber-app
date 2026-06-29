@@ -8,7 +8,8 @@ import {
   Menu, 
   X, 
   Loader2,
-  UserCheck
+  UserCheck,
+  Users
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -24,10 +25,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     pathname
   } = useAdminAuth();
 
-  // If we're loading, show a fullscreen Google loading screen
+  // If we're loading, show a fullscreen loading screen
   if (isLoading && pathname.startsWith("/admin/dashboard")) {
     return (
-      <div className="min-h-screen bg-[#F0F4F9] dark:bg-[#121212] text-foreground flex flex-col items-center justify-center">
+      <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center">
         <Loader2 className="w-9 h-9 animate-spin text-primary" />
         <p className="text-muted-foreground text-xs uppercase tracking-wider font-bold mt-4">Verificando Credenciales...</p>
       </div>
@@ -39,16 +40,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     return <>{children}</>;
   }
 
-  // For dashboard pages, render the Google Workspace Admin console style template
+  // For dashboard pages, render the premium admin console style template
   return (
-    <div className="min-h-screen bg-[#F0F4F9] dark:bg-[#121212] text-foreground flex flex-col md:flex-row relative">
+    <div className="min-h-screen bg-background text-foreground flex flex-col md:flex-row relative">
       
       {/* Sidebar for Desktop */}
-      <aside className="hidden md:flex flex-col w-64 bg-card border-r border-border p-6 space-y-6 flex-shrink-0">
+      <aside className="hidden md:flex flex-col w-64 bg-card border-r border-border/80 p-6 space-y-6 flex-shrink-0">
         
         {/* Brand */}
         <Link href="/" className="flex items-center gap-2 group px-2">
-          <div className="w-8 h-8 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+          <div className="w-8 h-8 bg-primary/10 rounded-xl flex items-center justify-center text-primary border border-primary/10 group-hover:border-primary/30 transition-all duration-200">
             <Scissors className="w-4.5 h-4.5" />
           </div>
           <span className="text-md font-bold tracking-tight text-foreground font-heading">
@@ -58,12 +59,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         {/* User Profile Card */}
         {session?.user && (
-          <div className="flex items-center gap-3 p-3.5 bg-secondary/60 rounded-2xl border border-border/50">
+          <div className="flex items-center gap-3 p-3.5 bg-secondary/40 rounded-2xl border border-border/60">
             <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
               <UserCheck className="w-4 h-4" />
             </div>
             <div className="truncate">
-              <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Admin</p>
+              <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">Admin</p>
               <p className="text-xs text-foreground truncate font-semibold">{session.user.email}</p>
             </div>
           </div>
@@ -75,12 +76,23 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             href="/admin/dashboard" 
             className={`flex items-center gap-3 px-4 py-3 rounded-full text-xs font-bold tracking-wide uppercase transition-all duration-150 ${
               pathname === "/admin/dashboard" 
-                ? "bg-primary/10 text-primary" 
-                : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                ? "bg-primary text-primary-foreground shadow-md shadow-primary/15" 
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
             }`}
           >
             <Calendar className="w-4 h-4" />
             Reservas de Hoy
+          </Link>
+          <Link 
+            href="/admin/barbers" 
+            className={`flex items-center gap-3 px-4 py-3 rounded-full text-xs font-bold tracking-wide uppercase transition-all duration-150 ${
+              pathname === "/admin/barbers" 
+                ? "bg-primary text-primary-foreground shadow-md shadow-primary/15" 
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
+            }`}
+          >
+            <Users className="w-4 h-4" />
+            Peluqueros
           </Link>
         </nav>
 
@@ -88,7 +100,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <Button 
           variant="ghost" 
           onClick={handleSignOut}
-          className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 hover:border-destructive/20 border border-transparent flex items-center justify-start gap-3 w-full py-5 rounded-full text-xs font-bold uppercase tracking-wide"
+          className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 hover:border-destructive/20 border border-transparent flex items-center justify-start gap-3 w-full py-5 rounded-full text-xs font-bold uppercase tracking-wide cursor-pointer"
         >
           <LogOut className="w-4 h-4" />
           Cerrar Sesión
@@ -116,14 +128,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* Mobile Menu Panel */}
       {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-[61px] left-0 w-full bg-card border-b border-border shadow-md z-20 flex flex-col p-6 space-y-4 animate-in slide-in-from-top-4 duration-200">
+        <div className="md:hidden absolute top-[61px] left-0 w-full bg-card border-b border-border/80 shadow-lg z-20 flex flex-col p-6 space-y-4 animate-in slide-in-from-top-4 duration-200">
           {session?.user && (
-            <div className="flex items-center gap-3 p-3.5 bg-secondary/60 rounded-2xl border border-border/50 mb-2">
+            <div className="flex items-center gap-3 p-3.5 bg-secondary/40 rounded-2xl border border-border/60 mb-2">
               <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                 <UserCheck className="w-4 h-4" />
               </div>
               <div className="truncate">
-                <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Admin</p>
+                <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">Admin</p>
                 <p className="text-xs text-foreground truncate font-semibold">{session.user.email}</p>
               </div>
             </div>
@@ -134,12 +146,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             onClick={() => setIsMobileMenuOpen(false)}
             className={`flex items-center gap-3 px-4 py-3.5 rounded-full text-xs font-bold tracking-wide uppercase transition-all duration-150 ${
               pathname === "/admin/dashboard" 
-                ? "bg-primary/10 text-primary" 
-                : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                ? "bg-primary text-primary-foreground shadow-md shadow-primary/15" 
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
             }`}
           >
             <Calendar className="w-4 h-4" />
             Reservas de Hoy
+          </Link>
+          <Link 
+            href="/admin/barbers" 
+            onClick={() => setIsMobileMenuOpen(false)}
+            className={`flex items-center gap-3 px-4 py-3.5 rounded-full text-xs font-bold tracking-wide uppercase transition-all duration-150 ${
+              pathname === "/admin/barbers" 
+                ? "bg-primary text-primary-foreground shadow-md shadow-primary/15" 
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
+            }`}
+          >
+            <Users className="w-4 h-4" />
+            Peluqueros
           </Link>
 
           <Button 
@@ -148,7 +172,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               setIsMobileMenuOpen(false);
               handleSignOut();
             }}
-            className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 border border-transparent flex items-center justify-start gap-3 w-full py-5 rounded-full text-xs font-bold uppercase tracking-wide"
+            className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 border border-transparent flex items-center justify-start gap-3 w-full py-5 rounded-full text-xs font-bold uppercase tracking-wide cursor-pointer"
           >
             <LogOut className="w-4 h-4" />
             Cerrar Sesión

@@ -38,7 +38,7 @@ const SERVICES_CONFIG = [
     price: "18€",
     duration: "30 min",
     icon: Scissors,
-    colorClass: "bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400",
+    colorClass: "bg-primary/10 text-primary border border-primary/20",
   },
   {
     id: "barba",
@@ -47,7 +47,7 @@ const SERVICES_CONFIG = [
     price: "12€",
     duration: "30 min",
     icon: Smile,
-    colorClass: "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400",
+    colorClass: "bg-accent text-accent-foreground border border-border/50",
   },
   {
     id: "combo",
@@ -56,7 +56,7 @@ const SERVICES_CONFIG = [
     price: "28€",
     duration: "60 min",
     icon: Sparkles,
-    colorClass: "bg-amber-50 text-amber-600 dark:bg-amber-950/30 dark:text-amber-400",
+    colorClass: "bg-primary/25 text-primary border border-primary/40 shadow-[0_0_15px_rgba(216,178,115,0.15)]",
   }
 ];
 
@@ -73,6 +73,12 @@ export default function BookingForm() {
     step,
     setStep,
     selectedService,
+    selectedBarber,
+    setSelectedBarber,
+    barbersList,
+    isLoadingBarbers,
+    busyBarberIds,
+    isLoadingBusyBarbers,
     selectedDate,
     setSelectedDate,
     selectedTime,
@@ -84,6 +90,7 @@ export default function BookingForm() {
     bookingSuccess,
     errorMessage,
     handleServiceSelect,
+    handleBarberSelect,
     handleTimeSelect,
     handleInputChange,
     isSlotPast,
@@ -113,11 +120,12 @@ export default function BookingForm() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] text-primary font-bold uppercase tracking-wider">Paso {step} de 3</p>
+              <p className="text-[10px] text-primary font-bold uppercase tracking-wider">Paso {step} de 4</p>
               <h2 className="text-lg font-bold text-foreground tracking-tight mt-1">
                 {step === 1 && "Selecciona un servicio"}
                 {step === 2 && "Elige fecha y hora"}
-                {step === 3 && "Tus datos de contacto"}
+                {step === 3 && "Elige un profesional"}
+                {step === 4 && "Tus datos de contacto"}
               </h2>
             </div>
             
@@ -136,7 +144,7 @@ export default function BookingForm() {
           <div className="relative h-1.5 w-full bg-secondary rounded-full overflow-hidden">
             <div 
               className="absolute h-full bg-primary transition-all duration-300 ease-out rounded-full" 
-              style={{ width: `${(step / 3) * 100}%` }}
+              style={{ width: `${(step / 4) * 100}%` }}
             />
           </div>
         </div>
@@ -150,7 +158,7 @@ export default function BookingForm() {
             animate={{ opacity: 1, scale: 1 }}
             className="flex flex-col items-center py-6 space-y-6 text-center"
           >
-            <div className="w-16 h-16 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center ring-8 ring-emerald-500/10">
+            <div className="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center ring-8 ring-primary/5 shadow-[0_0_20px_rgba(216,178,115,0.2)]">
               <CheckCircle2 className="w-9 h-9" />
             </div>
 
@@ -161,50 +169,60 @@ export default function BookingForm() {
               </p>
             </div>
 
-            {/* Google Calendar Invite Style Card */}
-            <div className="w-full max-w-sm bg-card border border-border rounded-2xl shadow-sm text-left overflow-hidden flex flex-row">
-              <div className="w-2.5 bg-primary shrink-0" />
-              <div className="p-4 flex-1 space-y-3">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h4 className="font-extrabold text-foreground text-sm font-heading">{selectedService?.title}</h4>
-                    <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider mt-0.5">Magic Barber Shop</p>
-                  </div>
-                  <span className="text-xs font-bold text-primary">{selectedService?.price}</span>
-                </div>
+            {/* Premium Reservation Ticket */}
+            <div className="w-full max-w-sm bg-secondary/50 border border-border/70 rounded-2xl shadow-md text-left overflow-hidden relative p-5 space-y-4">
+              {/* Decorative Golden Corner Accents */}
+              <div className="absolute top-0 right-0 w-8 h-8 bg-primary/10 rounded-bl-3xl border-l border-b border-primary/20 flex items-center justify-center">
+                <Sparkles className="w-3.5 h-3.5 text-primary" />
+              </div>
 
-                <div className="border-t border-border/80 pt-2.5 space-y-2 text-xs text-muted-foreground">
-                  <div className="flex items-center gap-2">
-                    <CalendarIcon className="w-3.5 h-3.5 text-primary shrink-0" />
-                    <span className="font-semibold text-foreground">
-                      {selectedDate && format(selectedDate, "EEEE d 'de' MMMM", { locale: es })}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Clock4 className="w-3.5 h-3.5 text-primary shrink-0" />
-                    <span className="font-semibold text-foreground">{selectedTime} hs <span className="font-normal text-muted-foreground">({selectedService?.duration})</span></span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
-                    <span>Centro Ciudad, 12, Madrid</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <User className="w-3.5 h-3.5 text-primary shrink-0" />
-                    <span>Para: <strong className="text-foreground">{formData.nombre} {formData.apellidos}</strong></span>
-                  </div>
+              <div className="space-y-1">
+                <span className="text-[9px] text-primary font-bold uppercase tracking-wider">Pase de Reserva</span>
+                <h4 className="font-extrabold text-foreground text-sm font-heading pr-6">{selectedService?.title}</h4>
+                <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest">Magic Barber Shop</p>
+              </div>
+
+              <div className="border-t border-dashed border-border/80 pt-3 space-y-2.5 text-xs text-muted-foreground">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">Fecha</span>
+                  <span className="font-semibold text-foreground">
+                    {selectedDate && format(selectedDate, "EEEE d 'de' MMMM", { locale: es })}
+                  </span>
                 </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">Horario</span>
+                  <span className="font-semibold text-foreground">{selectedTime} hs <span className="text-[10px] text-muted-foreground font-normal">({selectedService?.duration})</span></span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">Profesional</span>
+                  <span className="font-semibold text-foreground">{selectedBarber?.nombre || "Cualquier Peluquero"}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">Barbería</span>
+                  <span className="font-semibold text-foreground">Madrid Centro</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">Cliente</span>
+                  <span className="font-bold text-primary">{formData.nombre} {formData.apellidos}</span>
+                </div>
+              </div>
+              
+              <div className="border-t border-border/80 pt-3 flex items-center justify-between">
+                <span className="text-xs font-bold text-foreground">Precio total:</span>
+                <span className="text-base font-extrabold text-primary">{selectedService?.price}</span>
               </div>
             </div>
 
             <div className="w-full max-w-sm space-y-3">
               <Button 
-                className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold py-6 px-8 rounded-2xl w-full flex items-center justify-center gap-2.5 text-sm shadow-md shadow-[#25D366]/10"
+                className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold py-6 px-8 rounded-2xl w-full flex items-center justify-center gap-2.5 text-sm shadow-md shadow-[#25D366]/10 cursor-pointer"
                 onClick={() => {
                   const appointmentDate = new Date(selectedDate!);
                   const [hours, minutes] = selectedTime!.split(":").map(Number);
                   appointmentDate.setHours(hours, minutes, 0, 0);
                   const formattedDate = format(appointmentDate, "EEEE d 'de' MMMM 'a las' HH:mm 'hs'", { locale: es });
-                  const messageText = `¡Hola Magic Barber! Me gustaría confirmar mi cita:%0A%0A*Cliente:* ${formData.nombre} ${formData.apellidos}%0A*Servicio:* ${selectedService?.title}%0A*Fecha y Hora:* ${formattedDate}%0A*Teléfono:* ${formData.telefono}%0A%0A¡Muchas gracias!`;
+                  const barberName = selectedBarber?.id === "any" || !selectedBarber ? "Cualquier Peluquero" : selectedBarber.nombre;
+                  const messageText = `¡Hola Magic Barber! Me gustaría confirmar mi cita:%0A%0A*Cliente:* ${formData.nombre} ${formData.apellidos}%0A*Servicio:* ${selectedService?.title}%0A*Peluquero:* ${barberName}%0A*Fecha y Hora:* ${formattedDate}%0A*Teléfono:* ${formData.telefono}%0A%0A¡Muchas gracias!`;
                   const barberPhone = process.env.NEXT_PUBLIC_BARBER_WHATSAPP || "34600000000";
                   window.open(`https://wa.me/${barberPhone}?text=${messageText}`, "_blank");
                 }}
@@ -233,30 +251,29 @@ export default function BookingForm() {
                     <div 
                       key={srv.id}
                       onClick={() => handleServiceSelect(srv)}
-                      className={`group flex items-center justify-between p-4 rounded-2xl border cursor-pointer transition-all duration-200 ${
+                      className={`group flex items-center justify-between p-4.5 rounded-2xl border cursor-pointer transition-all duration-300 ${
                         isSelected 
-                          ? "border-primary bg-primary/[0.04] shadow-sm" 
-                          : "border-border/80 bg-card hover:bg-secondary/40 hover:border-border"
+                          ? "border-primary bg-primary/[0.03] shadow-md shadow-primary/5 scale-[1.01]" 
+                          : "border-border/80 bg-card hover:bg-secondary/40 hover:border-border hover:shadow-sm"
                       }`}
                     >
                       <div className="flex items-start gap-3.5 pr-2">
-                        {/* Dynamic Pastel Icon Circle */}
-                        <div className={`p-2.5 rounded-full shrink-0 ${srv.colorClass} transition-transform duration-200 group-hover:scale-105`}>
+                        <div className={`p-2.5 rounded-xl shrink-0 ${srv.colorClass} transition-transform duration-300 group-hover:scale-105`}>
                           <IconComponent className="w-5 h-5" />
                         </div>
-                        <div className="space-y-0.5 mt-0.5">
-                          <h4 className="font-bold text-sm text-foreground group-hover:text-primary transition-colors duration-150">{srv.title}</h4>
+                        <div className="space-y-1 mt-0.5">
+                          <h4 className="font-bold text-sm text-foreground group-hover:text-primary transition-colors duration-200">{srv.title}</h4>
                           <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">{srv.description}</p>
                         </div>
                       </div>
                       
-                      <div className="flex items-center gap-3 shrink-0 pl-1">
+                      <div className="flex items-center gap-3.5 shrink-0 pl-1">
                         <div className="text-right">
                           <div className="text-sm font-extrabold text-foreground">{srv.price}</div>
                           <div className="text-[10px] text-muted-foreground">{srv.duration}</div>
                         </div>
-                        <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${
-                          isSelected ? "border-primary bg-primary text-white" : "border-border text-transparent"
+                        <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 transition-all ${
+                          isSelected ? "border-primary bg-primary text-primary-foreground" : "border-border text-transparent"
                         }`}>
                           <Check className="w-3.5 h-3.5 stroke-[3]" />
                         </div>
@@ -276,7 +293,6 @@ export default function BookingForm() {
                 exit="exit"
                 className="space-y-5"
               >
-                {/* Date Selector Header & Month dialog button */}
                 <div className="flex items-center justify-between">
                   <Label className="text-foreground text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
                     <CalendarIcon className="w-4 h-4 text-primary" />
@@ -316,7 +332,6 @@ export default function BookingForm() {
                   </Dialog>
                 </div>
 
-                {/* Horizontal Date Picker slider strip (Mobile First) */}
                 <div className="flex gap-2 overflow-x-auto pb-2.5 pt-0.5 scrollbar-none px-0.5">
                   {daysList.map((date) => {
                     const isSelected = selectedDate && isSameDay(date, selectedDate);
@@ -347,7 +362,6 @@ export default function BookingForm() {
                   })}
                 </div>
 
-                {/* Time Slots Area */}
                 <div className="space-y-4">
                   <div className="flex items-center justify-between border-b border-border/60 pb-1">
                     <Label className="text-foreground text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
@@ -369,7 +383,6 @@ export default function BookingForm() {
                   ) : (
                     <div className="space-y-4 max-h-[300px] overflow-y-auto pr-1">
                       
-                      {/* Morning slots */}
                       {morningSlots.length > 0 && (
                         <div className="space-y-2">
                           <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Mañana</p>
@@ -402,7 +415,6 @@ export default function BookingForm() {
                         </div>
                       )}
 
-                      {/* Afternoon slots */}
                       {afternoonSlots.length > 0 && (
                         <div className="space-y-2">
                           <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Tarde</p>
@@ -434,7 +446,6 @@ export default function BookingForm() {
                           </div>
                         </div>
                       )}
-
                     </div>
                   )}
                 </div>
@@ -449,7 +460,7 @@ export default function BookingForm() {
                 <Button
                   disabled={!selectedTime}
                   onClick={() => setStep(3)}
-                  className="w-full bg-primary hover:bg-primary/95 text-white font-bold py-6 rounded-2xl flex items-center justify-center gap-2 text-sm shadow-sm transition-all"
+                  className="w-full bg-primary hover:bg-primary/95 text-white font-bold py-6 rounded-2xl flex items-center justify-center gap-2 text-sm shadow-sm transition-all cursor-pointer"
                 >
                   Continuar
                   <ArrowRight className="w-4 h-4" />
@@ -464,15 +475,109 @@ export default function BookingForm() {
                 initial="hidden"
                 animate="visible"
                 exit="exit"
+                className="space-y-3"
+              >
+                {/* Option: Any Barber */}
+                <div 
+                  onClick={() => handleBarberSelect({ id: "any", nombre: "Cualquier Peluquero" })}
+                  className={`group flex items-center justify-between p-4.5 rounded-2xl border cursor-pointer transition-all duration-300 ${
+                    selectedBarber?.id === "any" || !selectedBarber
+                      ? "border-primary bg-primary/[0.03] shadow-md shadow-primary/5 scale-[1.01]" 
+                      : "border-border/80 bg-card hover:bg-secondary/40 hover:border-border hover:shadow-sm"
+                  }`}
+                >
+                  <div className="flex items-center gap-3.5 pr-2">
+                    <div className="w-10 h-10 bg-primary/10 text-primary rounded-xl flex items-center justify-center border border-primary/20">
+                      <Sparkles className="w-5 h-5" />
+                    </div>
+                    <div className="space-y-0.5">
+                      <h4 className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">Cualquier Profesional</h4>
+                      <p className="text-[10px] text-muted-foreground">Te asignaremos el peluquero disponible más rápido.</p>
+                    </div>
+                  </div>
+                  <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 transition-all ${
+                    selectedBarber?.id === "any" || !selectedBarber ? "border-primary bg-primary text-primary-foreground" : "border-border text-transparent"
+                  }`}>
+                    <Check className="w-3.5 h-3.5 stroke-[3]" />
+                  </div>
+                </div>
+
+                {/* Loading State */}
+                {isLoadingBarbers || isLoadingBusyBarbers ? (
+                  <div className="py-8 flex flex-col items-center justify-center text-muted-foreground gap-2">
+                    <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                    <span className="text-xs">Buscando barberos disponibles...</span>
+                  </div>
+                ) : barbersList.length === 0 ? (
+                  <p className="text-xs text-center text-muted-foreground py-4">No hay barberos disponibles en este momento.</p>
+                ) : (
+                  barbersList.map((barber) => {
+                    const isSelected = selectedBarber?.id === barber.id;
+                    const isBusy = busyBarberIds.includes(barber.id);
+                    const initial = barber.nombre.charAt(0).toUpperCase();
+
+                    return (
+                      <div 
+                        key={barber.id}
+                        onClick={isBusy ? undefined : () => handleBarberSelect(barber)}
+                        className={`group flex items-center justify-between p-4.5 rounded-2xl border transition-all duration-300 ${
+                          isBusy
+                            ? "border-border/45 bg-secondary/20 opacity-55 cursor-not-allowed"
+                            : isSelected 
+                              ? "border-primary bg-primary/[0.03] shadow-md shadow-primary/5 scale-[1.01] cursor-pointer" 
+                              : "border-border/80 bg-card hover:bg-secondary/40 hover:border-border hover:shadow-sm cursor-pointer"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3.5 pr-2">
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm border transition-all duration-300 ${
+                            isBusy
+                              ? "bg-secondary text-muted-foreground/50 border-border/40"
+                              : "bg-secondary group-hover:bg-primary/10 text-muted-foreground group-hover:text-primary border-border group-hover:border-primary/20"
+                          }`}>
+                            {initial}
+                          </div>
+                          <div className="space-y-0.5">
+                            <h4 className={`font-bold text-sm transition-colors ${
+                              isBusy ? "text-muted-foreground" : "text-foreground group-hover:text-primary"
+                            }`}>{barber.nombre}</h4>
+                            <p className="text-[10px] text-muted-foreground">
+                              {isBusy ? "Ocupado en este horario" : "Disponible profesional"}
+                            </p>
+                          </div>
+                        </div>
+                        {!isBusy && (
+                          <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 transition-all ${
+                            isSelected ? "border-primary bg-primary text-primary-foreground" : "border-border text-transparent"
+                          }`}>
+                            <Check className="w-3.5 h-3.5 stroke-[3]" />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
+                )}
+              </motion.div>
+            )}
+
+            {step === 4 && (
+              <motion.div
+                key="step4"
+                variants={slideVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
                 className="space-y-5"
               >
-                {/* Summary of reservation */}
-                <div className="p-4 bg-secondary/40 rounded-2xl border border-border/80 space-y-2.5">
+                <div className="p-4 bg-secondary/30 rounded-2xl border border-border/60 space-y-2.5 shadow-sm">
                   <h5 className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Resumen de tu cita</h5>
                   <div className="grid grid-cols-2 gap-4 text-xs">
                     <div>
                       <p className="text-muted-foreground text-[10px]">Servicio</p>
                       <p className="text-foreground font-bold mt-0.5">{selectedService?.title}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground text-[10px]">Profesional</p>
+                      <p className="text-primary font-bold mt-0.5">{selectedBarber?.nombre || "Cualquier Peluquero"}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground text-[10px]">Precio & Duración</p>
@@ -487,7 +592,6 @@ export default function BookingForm() {
                   </div>
                 </div>
 
-                {/* Form fields */}
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
@@ -500,7 +604,7 @@ export default function BookingForm() {
                           placeholder="Ej. Juan" 
                           value={formData.nombre}
                           onChange={handleInputChange}
-                          className="pl-10 bg-card border-border text-foreground placeholder-muted-foreground/60 focus-visible:ring-primary focus-visible:border-primary py-6 rounded-xl text-sm"
+                          className="pl-10 bg-card border-border text-foreground placeholder-muted-foreground/60 focus-visible:ring-primary/30 focus-visible:border-primary py-6 rounded-xl text-sm"
                         />
                       </div>
                     </div>
@@ -515,7 +619,7 @@ export default function BookingForm() {
                           placeholder="Ej. Pérez" 
                           value={formData.apellidos}
                           onChange={handleInputChange}
-                          className="pl-10 bg-card border-border text-foreground placeholder-muted-foreground/60 focus-visible:ring-primary focus-visible:border-primary py-6 rounded-xl text-sm"
+                          className="pl-10 bg-card border-border text-foreground placeholder-muted-foreground/60 focus-visible:ring-primary/30 focus-visible:border-primary py-6 rounded-xl text-sm"
                         />
                       </div>
                     </div>
@@ -531,7 +635,7 @@ export default function BookingForm() {
                         placeholder="Ej. 34600000000" 
                         value={formData.telefono}
                         onChange={handleInputChange}
-                        className="pl-10 bg-card border-border text-foreground placeholder-muted-foreground/60 focus-visible:ring-primary focus-visible:border-primary py-6 rounded-xl text-sm"
+                        className="pl-10 bg-card border-border text-foreground placeholder-muted-foreground/60 focus-visible:ring-primary/30 focus-visible:border-primary py-6 rounded-xl text-sm"
                       />
                     </div>
                     <p className="text-[10px] text-muted-foreground leading-normal">
@@ -548,7 +652,7 @@ export default function BookingForm() {
                   <Button
                     disabled={!validateStep3() || isSubmitting}
                     onClick={handleSubmit}
-                    className="w-full bg-primary hover:bg-primary/95 disabled:bg-secondary disabled:text-muted-foreground text-white font-bold py-6 rounded-2xl shadow-sm transition-all flex items-center justify-center gap-2 text-sm"
+                    className="w-full bg-primary hover:bg-primary/95 disabled:bg-secondary disabled:text-muted-foreground text-primary-foreground font-bold py-6 rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 text-sm cursor-pointer"
                   >
                     {isSubmitting ? (
                       <>

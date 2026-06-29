@@ -7,12 +7,12 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#F0F4F9] dark:bg-[#121212] text-foreground flex flex-col">
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
       {/* Global Desktop Navigation Header */}
-      <header className="w-full bg-background border-b border-border/80 px-6 py-4 flex items-center justify-between sticky top-0 z-25">
+      <header className="w-full bg-background/80 backdrop-blur-md border-b border-border/60 px-6 py-4 flex items-center justify-between sticky top-0 z-25">
         <div className="max-w-5xl mx-auto w-full flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-9 h-9 bg-primary/10 rounded-xl flex items-center justify-center text-primary group-hover:scale-105 transition-transform duration-200">
+            <div className="w-9 h-9 bg-primary/10 rounded-xl flex items-center justify-center text-primary group-hover:scale-105 group-hover:border group-hover:border-primary/30 transition-all duration-200">
               <Scissors className="w-5 h-5" />
             </div>
             <span className="text-lg font-bold tracking-tight text-foreground font-heading">
@@ -31,67 +31,69 @@ export default function Home() {
 
       {/* Main Content: Mobile Container centered on desktop */}
       <main className="flex-1 flex flex-col items-center justify-center p-0 sm:p-6 md:py-10">
-        <div className="w-full max-w-md sm:rounded-3xl bg-card border-0 sm:border border-border sm:shadow-lg overflow-hidden flex flex-col relative min-h-screen sm:min-h-auto sm:my-4">
+        <div className="w-full max-w-md sm:rounded-[28px] bg-card border-0 sm:border border-border/80 sm:shadow-2xl overflow-hidden flex flex-col relative min-h-screen sm:min-h-auto sm:my-4 shadow-black/[0.03]">
           
           {/* Cover Header Banner */}
-          <div className="w-full h-40 bg-gradient-to-br from-primary via-[#1a73e8] to-[#0842a0] relative flex items-center justify-center text-white p-6 shrink-0">
-            <div className="absolute inset-0 bg-black/10 mix-blend-multiply" />
-            <div className="relative text-center space-y-1">
-              <div className="inline-flex p-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
-                <Scissors className="w-6 h-6 text-white" />
+          <div className="w-full h-44 bg-gradient-to-br from-[#1A1816] via-[#11100F] to-[#25201A] relative flex flex-col items-center justify-center text-white p-6 shrink-0 border-b border-border/40">
+            <div className="absolute inset-0 bg-black/20 mix-blend-multiply" />
+            <div className="relative text-center space-y-2">
+              <div className="inline-flex p-3 bg-primary/10 backdrop-blur-md rounded-2xl border border-primary/20 shadow-[0_0_20px_rgba(216,178,115,0.15)]">
+                <Scissors className="w-6 h-6 text-primary" />
               </div>
-              <p className="text-xs font-bold uppercase tracking-widest text-white/80">Estilo & Precisión</p>
+              <p className="text-[10px] font-extrabold uppercase tracking-widest text-primary">Estilo & Precisión</p>
             </div>
           </div>
 
-          {/* Place Header Info Card (Google Maps Style) */}
-          <div className="p-5 border-b border-border bg-card shrink-0 space-y-4">
-            <div>
+          {/* Elegant Brand Header */}
+          <div className="p-6 border-b border-border/80 bg-card space-y-4">
+            <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-extrabold tracking-tight text-foreground font-heading">
                   Magic Barber Shop
                 </h1>
-                <span className="text-xs bg-primary/10 text-primary font-bold px-2.5 py-1 rounded-full uppercase">
-                  Premium
+                <span className="text-[10px] bg-primary/10 text-primary border border-primary/20 font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                  Premium Barbería
                 </span>
               </div>
               
-              {/* Star Rating */}
-              <div className="flex items-center gap-1.5 mt-1.5">
-                <span className="text-sm font-bold text-foreground">4.9</span>
-                <div className="flex items-center text-amber-500">
-                  <Star className="w-4 h-4 fill-current" />
-                  <Star className="w-4 h-4 fill-current" />
-                  <Star className="w-4 h-4 fill-current" />
-                  <Star className="w-4 h-4 fill-current" />
-                  <Star className="w-4 h-4 fill-current" />
+              {/* Elegantly styled details */}
+              <div className="flex flex-wrap gap-y-1.5 gap-x-3 text-xs text-muted-foreground">
+                <div className="flex items-center gap-1">
+                  <Star className="w-3.5 h-3.5 fill-primary text-primary" />
+                  <span className="font-bold text-foreground">4.9</span>
+                  <span>(184 opiniones)</span>
                 </div>
-                <span className="text-xs text-muted-foreground">(184 reseñas) • Barbería</span>
+                <span>•</span>
+                <div className="flex items-center gap-1">
+                  <Clock className="w-3.5 h-3.5 text-primary" />
+                  <span>L-S: 10:00 - 20:00</span>
+                </div>
+                <span>•</span>
+                <div className="flex items-center gap-1">
+                  <MapPin className="w-3.5 h-3.5 text-primary" />
+                  <span>Madrid Centro</span>
+                </div>
               </div>
             </div>
 
-            {/* Google Quick Actions Buttons */}
-            <div className="grid grid-cols-4 gap-2 border-y border-border/80 py-3">
+            {/* Elegantes Botones de Acción de Estilo Premium (No Google Maps) */}
+            <div className="flex gap-2 pt-2">
               <a 
                 href="tel:34600000000" 
-                className="flex flex-col items-center gap-1 text-center group cursor-pointer"
+                className="flex-1 py-2.5 px-3 rounded-xl border border-border hover:border-primary/50 bg-secondary/45 hover:bg-primary/[0.04] text-foreground hover:text-primary transition-all duration-200 flex items-center justify-center gap-2 text-xs font-bold text-center"
               >
-                <div className="w-10 h-10 rounded-full bg-secondary group-hover:bg-primary/10 flex items-center justify-center text-primary transition-all duration-200">
-                  <Phone className="w-4 h-4" />
-                </div>
-                <span className="text-[10px] font-semibold text-muted-foreground group-hover:text-primary transition-all duration-200">Llamar</span>
+                <Phone className="w-3.5 h-3.5" />
+                <span>Llamar</span>
               </a>
 
               <a 
                 href="https://maps.google.com" 
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex flex-col items-center gap-1 text-center group cursor-pointer"
+                className="flex-1 py-2.5 px-3 rounded-xl border border-border hover:border-primary/50 bg-secondary/45 hover:bg-primary/[0.04] text-foreground hover:text-primary transition-all duration-200 flex items-center justify-center gap-2 text-xs font-bold text-center"
               >
-                <div className="w-10 h-10 rounded-full bg-secondary group-hover:bg-primary/10 flex items-center justify-center text-primary transition-all duration-200">
-                  <Compass className="w-4 h-4" />
-                </div>
-                <span className="text-[10px] font-semibold text-muted-foreground group-hover:text-primary transition-all duration-200">Cómo llegar</span>
+                <Compass className="w-3.5 h-3.5" />
+                <span>Ubicación</span>
               </a>
 
               <button 
@@ -104,35 +106,11 @@ export default function Home() {
                     });
                   }
                 }}
-                className="flex flex-col items-center gap-1 text-center group cursor-pointer"
+                className="flex-1 py-2.5 px-3 rounded-xl border border-border hover:border-primary/50 bg-secondary/45 hover:bg-primary/[0.04] text-foreground hover:text-primary transition-all duration-200 flex items-center justify-center gap-2 text-xs font-bold text-center cursor-pointer"
               >
-                <div className="w-10 h-10 rounded-full bg-secondary group-hover:bg-primary/10 flex items-center justify-center text-primary transition-all duration-200">
-                  <Share2 className="w-4 h-4" />
-                </div>
-                <span className="text-[10px] font-semibold text-muted-foreground group-hover:text-primary transition-all duration-200">Compartir</span>
+                <Share2 className="w-3.5 h-3.5" />
+                <span>Compartir</span>
               </button>
-
-              <a 
-                href="#"
-                className="flex flex-col items-center gap-1 text-center group cursor-pointer"
-              >
-                <div className="w-10 h-10 rounded-full bg-secondary group-hover:bg-primary/10 flex items-center justify-center text-primary transition-all duration-200">
-                  <Globe className="w-4 h-4" />
-                </div>
-                <span className="text-[10px] font-semibold text-muted-foreground group-hover:text-primary transition-all duration-200">Sitio Web</span>
-              </a>
-            </div>
-
-            {/* Quick Place Information details */}
-            <div className="space-y-2.5 text-xs text-muted-foreground pt-1">
-              <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-primary shrink-0" />
-                <span>Centro Ciudad, 12 • 28001 Madrid</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-primary shrink-0" />
-                <span>Abierto • L-S: 10:00 - 20:00</span>
-              </div>
             </div>
           </div>
 
