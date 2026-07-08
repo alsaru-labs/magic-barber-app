@@ -17,7 +17,8 @@ import {
   CalendarCheck,
   CalendarX,
   Loader2,
-  User
+  User,
+  RefreshCw
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -31,6 +32,7 @@ import {
   DialogFooter
 } from "@/components/ui/dialog";
 import { useAdminCalendar } from "@/hooks/useAdminCalendar";
+import { motion } from "framer-motion";
 
 export default function AdminCalendar() {
   const {
@@ -45,7 +47,7 @@ export default function AdminCalendar() {
     setIsDialogOpen,
     isUpdating,
     errorMsg,
-    fetchAppointments, // loadAppointments mapped or renamed
+    fetchAppointments,
     handleUpdateStatus,
     handleReassignBarber,
     getLocalTime,
@@ -59,212 +61,210 @@ export default function AdminCalendar() {
   const getStatusBadge = (estado: string) => {
     switch (estado) {
       case "confirmada":
-        return <span className="px-2.5 py-1 text-[9px] font-extrabold uppercase rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 tracking-wider">Confirmada</span>;
+        return (
+          <span className="px-2.5 py-0.5 text-[8px] font-bold uppercase rounded-none bg-emerald-500/10 text-emerald-600 dark:text-emerald-450 border border-emerald-500/25 tracking-widest shrink-0">
+            Confirmada
+          </span>
+        );
       case "cancelada":
-        return <span className="px-2.5 py-1 text-[9px] font-extrabold uppercase rounded-full bg-destructive/10 text-destructive border border-destructive/20 tracking-wider">Cancelada</span>;
+        return (
+          <span className="px-2.5 py-0.5 text-[8px] font-bold uppercase rounded-none bg-destructive/10 text-destructive border border-destructive/20 tracking-widest shrink-0">
+            Cancelada
+          </span>
+        );
       default:
-        return <span className="px-2.5 py-1 text-[9px] font-extrabold uppercase rounded-full bg-primary/10 text-primary border border-primary/20 tracking-wider">Pendiente</span>;
+        return (
+          <span className="px-2.5 py-0.5 text-[8px] font-bold uppercase rounded-none bg-primary/10 text-primary border border-primary/20 tracking-widest shrink-0">
+            Pendiente
+          </span>
+        );
     }
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-5xl mx-auto">
       
       {/* Page Title */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-foreground font-heading">Panel de Reservas</h2>
-          <p className="text-muted-foreground text-xs md:text-sm">Administra las citas diarias, confirma solicitudes y reasigna barberos.</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5">
+        <div className="space-y-0.5">
+          <span className="text-[8px] font-mono tracking-[0.2em] text-primary uppercase font-bold">
+            CONSOLA DE CONTROL
+          </span>
+          <h2 className="text-xl font-light tracking-wide text-foreground font-serif uppercase mt-0.5">
+            Panel de Reservas
+          </h2>
         </div>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={fetchAppointments}
+          className="border-border hover:bg-secondary/40 text-muted-foreground hover:text-foreground rounded-none px-4 py-2.5 text-[9px] font-extrabold uppercase tracking-widest shrink-0 self-start sm:self-auto cursor-pointer"
+        >
+          <RefreshCw className="w-3.5 h-3.5 mr-1.5" />
+          Actualizar Agenda
+        </Button>
       </div>
 
-      {/* Overview Stats (M3 widgets style) */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="bg-card border-border/80 shadow-sm rounded-2xl overflow-hidden hover:shadow-md transition-shadow">
-          <CardContent className="p-4 flex items-center justify-between">
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Total Citas</p>
-              <h4 className="text-2xl font-extrabold text-foreground mt-1 font-heading">{totalCount}</h4>
-            </div>
-            <div className="p-2.5 bg-primary/15 text-primary rounded-xl">
-              <TrendingUp className="w-4 h-4" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-card border-border/80 shadow-sm rounded-2xl overflow-hidden hover:shadow-md transition-shadow">
-          <CardContent className="p-4 flex items-center justify-between">
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Pendientes</p>
-              <h4 className="text-2xl font-extrabold text-primary mt-1 font-heading">{pendingCount}</h4>
-            </div>
-            <div className="p-2.5 bg-primary/10 text-primary rounded-xl">
-              <Clock3 className="w-4 h-4" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-card border-border/80 shadow-sm rounded-2xl overflow-hidden hover:shadow-md transition-shadow">
-          <CardContent className="p-4 flex items-center justify-between">
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Confirmadas</p>
-              <h4 className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-450 mt-1 font-heading">{confirmedCount}</h4>
-            </div>
-            <div className="p-2.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-450 rounded-xl">
-              <CalendarCheck className="w-4 h-4" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-card border-border/80 shadow-sm rounded-2xl overflow-hidden hover:shadow-md transition-shadow">
-          <CardContent className="p-4 flex items-center justify-between">
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Canceladas</p>
-              <h4 className="text-2xl font-extrabold text-destructive mt-1 font-heading">{cancelledCount}</h4>
-            </div>
-            <div className="p-2.5 bg-destructive/10 text-destructive rounded-xl">
-              <CalendarX className="w-4 h-4" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Main Grid: Calendar Picker + Daily Appointment List */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      {/* Editorial Roster Metrics */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-0 border border-border bg-secondary/5">
         
-        {/* Calendar Card Selector */}
-        <Card className="bg-card border-border lg:col-span-4 p-4 flex flex-col items-center rounded-2xl shadow-sm">
-          <CardHeader className="p-2 pb-4 text-center">
-            <CardTitle className="text-xs font-bold text-foreground uppercase tracking-wider">Calendario</CardTitle>
-          </CardHeader>
+        <div className="p-4 border-r border-b md:border-b-0 border-border space-y-1">
+          <p className="text-[8px] font-extrabold uppercase tracking-widest text-muted-foreground">TOTAL CITAS</p>
+          <h4 className="text-xl font-light text-foreground font-serif">{totalCount}</h4>
+        </div>
+
+        <div className="p-4 border-r border-b md:border-b-0 border-border space-y-1">
+          <p className="text-[8px] font-extrabold uppercase tracking-widest text-primary">PENDIENTES</p>
+          <h4 className="text-xl font-light text-primary font-serif">{pendingCount}</h4>
+        </div>
+
+        <div className="p-4 border-r border-border space-y-1">
+          <p className="text-[8px] font-extrabold uppercase tracking-widest text-emerald-600 dark:text-emerald-450">CONFIRMADAS</p>
+          <h4 className="text-xl font-light text-emerald-600 dark:text-emerald-450 font-serif">{confirmedCount}</h4>
+        </div>
+
+        <div className="p-4 space-y-1">
+          <p className="text-[8px] font-extrabold uppercase tracking-widest text-destructive">CANCELADAS</p>
+          <h4 className="text-xl font-light text-destructive font-serif">{cancelledCount}</h4>
+        </div>
+
+      </div>
+
+      {/* Main Grid Split layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        {/* Calendar Picker (Sharp) */}
+        <div className="border border-border p-4 bg-secondary/5 lg:col-span-4 flex flex-col items-center">
+          <span className="text-[8px] font-extrabold text-muted-foreground uppercase tracking-widest border-b border-border pb-2 w-full text-center block mb-4">
+            Calendario
+          </span>
           <Calendar
             mode="single"
             selected={selectedDate}
             onSelect={setSelectedDate}
             className="border-0 p-0"
             classNames={{
-              selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground rounded-full font-bold",
-              today: "text-primary border border-primary/30 rounded-full",
+              selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground rounded-none font-bold",
+              today: "text-primary border border-primary/30 rounded-none font-semibold",
             }}
           />
-        </Card>
+        </div>
 
-        {/* Appointments List Card (Google Calendar style list) */}
-        <Card className="bg-card border-border lg:col-span-8 overflow-hidden min-h-[400px] rounded-2xl shadow-sm">
-          <CardHeader className="border-b border-border/85 py-4 px-6 flex flex-row items-center justify-between">
-            <div>
-              <CardTitle className="text-sm font-bold text-foreground font-heading">Agenda Diaria</CardTitle>
-              <CardDescription className="text-muted-foreground text-xs mt-0.5">
-                {selectedDate ? format(selectedDate, "EEEE d 'de' MMMM, yyyy", { locale: es }) : "No hay fecha seleccionada"}
-              </CardDescription>
-            </div>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={fetchAppointments} // uses LoadAppointments ref in custom hook
-              className="border-border text-muted-foreground hover:bg-secondary rounded-full px-4 text-xs font-bold"
-            >
-              Recargar
-            </Button>
-          </CardHeader>
+        {/* Daily agenda appointments (macOS Reminders / list - sharp) */}
+        <div className="border border-border lg:col-span-8 flex flex-col min-h-[400px]">
+          <div className="border-b border-border py-4 px-6 bg-secondary/15 flex items-center justify-between">
+            <h3 className="text-xs font-bold uppercase tracking-widest text-foreground">Agenda Diaria</h3>
+            <span className="text-[9px] font-mono tracking-widest uppercase text-primary font-bold">
+              {selectedDate ? format(selectedDate, "dd / MM / yyyy", { locale: es }) : ""}
+            </span>
+          </div>
           
-          <CardContent className="p-6">
+          <div className="p-6 flex-1 flex flex-col justify-start overflow-y-auto apple-scrollbar">
             {isLoading ? (
-              <div className="h-64 flex flex-col items-center justify-center text-muted-foreground gap-2">
-                <Loader2 className="w-7 h-7 animate-spin text-primary" />
-                <span className="text-xs">Cargando reservaciones...</span>
+              <div className="h-64 flex flex-col items-center justify-center text-muted-foreground gap-2 flex-1">
+                <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                <span className="text-[9px] tracking-widest uppercase">Cargando reservas...</span>
               </div>
             ) : appointments.length === 0 ? (
-              <div className="h-64 flex flex-col items-center justify-center text-muted-foreground border border-dashed border-border rounded-2xl bg-secondary/10 gap-3 text-center px-4">
-                <CalendarIcon className="w-8 h-8 text-muted-foreground/60" />
+              <div className="h-64 flex flex-col items-center justify-center text-muted-foreground border border-dashed border-border bg-secondary/5 gap-3 text-center px-4 flex-1">
+                <CalendarIcon className="w-6 h-6 text-muted-foreground/35" />
                 <div>
-                  <p className="font-bold text-foreground text-sm font-heading">Sin Citas Agendadas</p>
-                  <p className="text-xs text-muted-foreground mt-1 max-w-xs leading-normal">No hay reservas registradas para esta fecha en el sistema.</p>
+                  <p className="text-xs font-bold uppercase tracking-wider text-foreground">Sin Citas Agendadas</p>
+                  <p className="text-[10px] text-muted-foreground mt-1 max-w-[200px] leading-normal uppercase">
+                    No hay reservas registradas en el día.
+                  </p>
                 </div>
               </div>
             ) : (
-              <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1">
-                {appointments.map((appt) => (
+              <div className="space-y-1 max-h-[420px] overflow-y-auto pr-1 apple-scrollbar">
+                {appointments.map((appt, idx) => (
                   <div
                     key={appt.id}
                     onClick={() => handleOpenDialog(appt)}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl border border-border/70 bg-secondary/20 hover:border-primary/50 hover:bg-primary/[0.01] cursor-pointer transition-all duration-150"
+                    className="flex flex-col sm:flex-row sm:items-center justify-between py-4 border-b border-border/60 hover:pl-2 cursor-pointer transition-all duration-300"
                   >
                     <div className="flex items-center gap-4">
-                      {/* Time Badge Google Style */}
-                      <div className="flex items-center gap-1.5 text-primary font-extrabold bg-primary/10 border border-primary/20 py-1.5 px-3.5 rounded-full text-xs shrink-0">
-                        <Clock className="w-3.5 h-3.5" />
-                        {getLocalTime(appt.fecha_hora)}
-                      </div>
+                      {/* Serif Number Indicator */}
+                      <span className="font-serif text-sm font-light text-primary/40 min-w-[20px]">
+                        0{idx + 1}
+                      </span>
                       
-                      {/* Client & Service Info */}
-                      <div className="space-y-0.5">
-                        <h4 className="font-bold text-foreground text-sm font-heading">{appt.nombre} {appt.apellidos}</h4>
-                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground font-medium">
-                          <span className="flex items-center gap-1.5">
-                            <Scissors className="w-3.5 h-3.5 text-primary/70" />
-                            {appt.servicio}
-                          </span>
-                          <span className="flex items-center gap-1.5 border-l border-border/60 pl-3">
-                            <User className="w-3.5 h-3.5 text-primary/70" />
-                            {appt.peluqueros?.nombre || "Sin Asignar"}
-                          </span>
+                      {/* Time text */}
+                      <span className="text-xs font-bold tracking-widest text-primary shrink-0">
+                        {getLocalTime(appt.fecha_hora)} HS
+                      </span>
+                      
+                      {/* Client info details */}
+                      <div className="space-y-0.5 pl-2 border-l border-border/40">
+                        <h4 className="text-xs font-bold uppercase tracking-wider text-foreground">
+                          {appt.nombre} {appt.apellidos}
+                        </h4>
+                        <div className="flex flex-wrap items-center gap-x-2 text-[10px] text-muted-foreground uppercase font-light">
+                          <span>{appt.servicio}</span>
+                          <span>•</span>
+                          <span>{appt.peluqueros?.nombre || "Sin Asignar"}</span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between sm:justify-end gap-4 mt-3 sm:mt-0 pl-0 sm:pl-4 border-t sm:border-t-0 border-border/60 pt-2.5 sm:pt-0 shrink-0">
-                      <span className="text-xs font-semibold text-muted-foreground block sm:inline">{appt.telefono_whatsapp}</span>
+                    <div className="flex items-center justify-between sm:justify-end gap-4 mt-3 sm:mt-0 pl-0 sm:pl-4 pt-2 sm:pt-0 shrink-0 select-none">
+                      <span className="text-[10px] font-bold text-muted-foreground">
+                        {appt.telefono_whatsapp}
+                      </span>
                       {getStatusBadge(appt.estado)}
                     </div>
                   </div>
                 ))}
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
-      {/* Appointment Detail Dialog (Google styling) */}
+      {/* Appointment Detail Dialog (Sharp macOS Sheet) */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="bg-card border border-border text-foreground max-w-md rounded-3xl p-6">
+        <DialogContent className="bg-popover border border-border text-foreground max-w-md rounded-none p-6 shadow-2xl relative">
+          
+          {/* Top Gold Accent Line */}
+          <div className="absolute top-0 left-0 w-full h-[2px] bg-primary" />
+
           {selectedAppt && (
             <>
-              <DialogHeader>
-                <DialogTitle className="text-lg font-bold text-foreground font-heading">
-                  Detalles de la Cita
+              <DialogHeader className="pb-3 border-b border-border">
+                <DialogTitle className="text-xs font-extrabold uppercase tracking-widest text-foreground">
+                  Detalles de la Reserva
                 </DialogTitle>
-                <DialogDescription className="text-muted-foreground text-xs">
-                  Cita ID: {selectedAppt.id.substring(0, 8)}...
+                <DialogDescription className="text-muted-foreground text-[9px] font-mono tracking-widest uppercase">
+                  Cita ID: {selectedAppt.id.substring(0, 8)}
                 </DialogDescription>
               </DialogHeader>
 
-              {/* Detail list */}
-              <div className="space-y-3.5 py-4 border-y border-border/80 text-xs md:text-sm">
+              {/* Detail fields */}
+              <div className="space-y-4 py-4 text-xs md:text-sm leading-relaxed uppercase tracking-wider font-light">
                 <div className="grid grid-cols-3 gap-2">
-                  <span className="text-muted-foreground font-bold uppercase tracking-wider text-[10px] mt-0.5">Cliente:</span>
+                  <span className="text-muted-foreground font-bold text-[8px] tracking-widest mt-0.5">Cliente:</span>
                   <span className="col-span-2 font-bold text-foreground">{selectedAppt.nombre} {selectedAppt.apellidos}</span>
                 </div>
                 <div className="grid grid-cols-3 gap-2">
-                  <span className="text-muted-foreground font-bold uppercase tracking-wider text-[10px] mt-0.5">Servicio:</span>
+                  <span className="text-muted-foreground font-bold text-[8px] tracking-widest mt-0.5">Servicio:</span>
                   <span className="col-span-2 font-bold text-primary">{selectedAppt.servicio}</span>
                 </div>
                 <div className="grid grid-cols-3 gap-2">
-                  <span className="text-muted-foreground font-bold uppercase tracking-wider text-[10px] mt-0.5">Horario:</span>
-                  <span className="col-span-2 font-semibold text-foreground">
-                    {format(new Date(selectedAppt.fecha_hora), "dd/MM/yyyy")} a las {getLocalTime(selectedAppt.fecha_hora)} hs
+                  <span className="text-muted-foreground font-bold text-[8px] tracking-widest mt-0.5">Horario:</span>
+                  <span className="col-span-2 font-bold text-foreground">
+                    {format(new Date(selectedAppt.fecha_hora), "dd/MM/yyyy")} a las {getLocalTime(selectedAppt.fecha_hora)} HS
                   </span>
                 </div>
-                <div className="grid grid-cols-3 gap-2">
-                  <span className="text-muted-foreground font-bold uppercase tracking-wider text-[10px] mt-0.5">Peluquero:</span>
+                <div className="grid grid-cols-3 gap-2 items-center">
+                  <span className="text-muted-foreground font-bold text-[8px] tracking-widest">Peluquero:</span>
                   <div className="col-span-2">
                     <select
                       value={selectedAppt.peluquero_id || ""}
                       onChange={(e) => handleReassignBarber(selectedAppt.id, e.target.value)}
                       disabled={isUpdating}
-                      className="w-full bg-secondary/80 border border-border text-foreground text-xs font-semibold py-1.5 px-2.5 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary/40 focus:border-primary/50"
+                      className="w-full bg-secondary/35 border-0 border-b border-border text-foreground text-xs font-bold py-2 px-1 focus:outline-none focus:border-primary cursor-pointer rounded-none uppercase"
                     >
-                      <option value="" disabled>Seleccionar Peluquero</option>
+                      <option value="" disabled>Asignar Profesional</option>
                       {barbers.map((b: any) => (
                         <option key={b.id} value={b.id}>
                           {b.nombre} {!b.activo && "(Inactivo)"}
@@ -274,37 +274,38 @@ export default function AdminCalendar() {
                   </div>
                 </div>
                 <div className="grid grid-cols-3 gap-2">
-                  <span className="text-muted-foreground font-bold uppercase tracking-wider text-[10px] mt-0.5">Teléfono:</span>
-                  <span className="col-span-2 font-semibold text-foreground flex items-center gap-1.5">
-                    <Phone className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                  <span className="text-muted-foreground font-bold text-[8px] tracking-widest mt-0.5">Contacto:</span>
+                  <span className="col-span-2 font-bold text-foreground flex items-center gap-1.5">
+                    <Phone className="w-3.5 h-3.5 text-muted-foreground/60 shrink-0" />
                     {selectedAppt.telefono_whatsapp}
                   </span>
                 </div>
                 <div className="grid grid-cols-3 gap-2 items-center">
-                  <span className="text-muted-foreground font-bold uppercase tracking-wider text-[10px]">Estado:</span>
+                  <span className="text-muted-foreground font-bold text-[8px] tracking-widest">Estado:</span>
                   <span className="col-span-2">{getStatusBadge(selectedAppt.estado)}</span>
                 </div>
 
                 {errorMsg && (
-                  <div className="p-3.5 bg-destructive/10 border border-destructive/20 rounded-xl text-xs text-destructive flex items-start gap-2">
+                  <div className="p-3 bg-destructive/10 border border-destructive/20 text-xs text-destructive font-bold uppercase tracking-widest">
                     <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
                     <span>{errorMsg}</span>
                   </div>
                 )}
               </div>
 
-              {/* Dialog Action Buttons */}
-              <DialogFooter className="flex flex-col sm:flex-row gap-2 mt-4">
-                {/* WhatsApp Chat Button */}
+              {/* Dialog Footer Actions */}
+              <DialogFooter className="flex flex-col sm:flex-row gap-2 border-t border-border pt-4">
+                
+                {/* Chat via WhatsApp */}
                 <Button
                   onClick={() => {
                     const message = `Hola ${selectedAppt.nombre}, te escribimos de Magic Barber sobre tu cita para ${selectedAppt.servicio}...`;
                     window.open(`https://wa.me/${selectedAppt.telefono_whatsapp}?text=${encodeURIComponent(message)}`, "_blank");
                   }}
-                  className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold gap-2 py-5 rounded-xl flex-1 text-xs cursor-pointer"
+                  className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold gap-2 py-5 rounded-none flex-1 text-xs uppercase tracking-widest cursor-pointer border border-[#25D366] hover:shadow-lg transition-all"
                 >
                   <MessageSquare className="w-4 h-4 fill-current" />
-                  Abrir WhatsApp
+                  Chat WhatsApp
                 </Button>
 
                 <div className="flex gap-2 flex-1 w-full">
@@ -314,7 +315,7 @@ export default function AdminCalendar() {
                       variant="outline"
                       disabled={isUpdating}
                       onClick={() => handleUpdateStatus(selectedAppt.id, "cancelada")}
-                      className="border-border text-destructive hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 font-bold py-5 rounded-xl flex-1 bg-transparent text-xs cursor-pointer"
+                      className="border-border text-destructive hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 font-bold py-5 rounded-none flex-1 bg-transparent text-xs uppercase tracking-widest cursor-pointer transition-all"
                     >
                       <X className="w-4 h-4 mr-1.5" />
                       Cancelar
@@ -326,7 +327,7 @@ export default function AdminCalendar() {
                     <Button
                       disabled={isUpdating}
                       onClick={() => handleUpdateStatus(selectedAppt.id, "confirmada")}
-                      className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-5 rounded-xl flex-1 text-xs cursor-pointer"
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-5 rounded-none flex-1 text-xs uppercase tracking-widest cursor-pointer hover:shadow-lg transition-all border border-primary"
                     >
                       <Check className="w-4 h-4 mr-1.5" />
                       Confirmar

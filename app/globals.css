@@ -10,6 +10,7 @@
   --font-sans: var(--font-inter);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-outfit);
+  --font-serif: var(--font-serif-editorial);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -49,81 +50,164 @@
 }
 
 :root {
-  --background: #FAF9F5; /* Premium warm alabaster */
-  --foreground: #1C1917; /* Deep stone charcoal */
-  --card: #ffffff; /* Pure white card */
-  --card-foreground: #1C1917;
-  --popover: #ffffff;
-  --popover-foreground: #1C1917;
-  --primary: #9F7E50; /* Elegant classic bronze-gold */
+  --background: #FAF8F5; /* Alabaster soft luxury light background */
+  --foreground: #1D1C1A; /* Deep ink charcoal */
+  --card: rgba(255, 255, 255, 0.45); /* Ultra translucent light canvas */
+  --card-foreground: #1D1C1A;
+  --popover: rgba(255, 255, 255, 0.95);
+  --popover-foreground: #1D1C1A;
+  --primary: #9B7B4B; /* Muted gold / raw brass */
   --primary-foreground: #ffffff;
-  --secondary: #F5F3EF; /* Soft warm sand */
-  --secondary-foreground: #1C1917;
-  --muted: #F0EDE6; /* Slightly darker warm sand */
-  --muted-foreground: #78716C; /* Muted stone taupe */
-  --accent: #F5F0E6; /* Light cream gold */
-  --accent-foreground: #8A6635; /* Darker gold text */
-  --destructive: #AF3A30; /* Sophisticated deep red */
+  --secondary: #F3ECE2; /* Soft warm linen */
+  --secondary-foreground: #1D1C1A;
+  --muted: #EFE6DA;
+  --muted-foreground: #706B63;
+  --accent: #FDF9F2;
+  --accent-foreground: #8B6B3D;
+  --destructive: #A73027;
   --destructive-foreground: #ffffff;
-  --border: #E7E2D8; /* Soft warm border */
-  --input: #E7E2D8;
-  --ring: #9F7E50;
-  --radius: 1.5rem; /* Extra large rounded corners per Material Design 3 */
+  --border: rgba(29, 28, 26, 0.08); /* Hairline border */
+  --input: rgba(29, 28, 26, 0.08);
+  --ring: #9B7B4B;
+  --radius: 0rem; /* Ultra sharp / zero rounded corners for high-end lookbook style */
   
-  /* Sidebar styles */
+  --font-serif-editorial: Georgia, Cambria, "Times New Roman", serif;
+  
+  /* Sidebar */
   --sidebar: #ffffff;
-  --sidebar-foreground: #1C1917;
-  --sidebar-primary: #9F7E50;
+  --sidebar-foreground: #1D1C1A;
+  --sidebar-primary: #9B7B4B;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #F5F3EF;
-  --sidebar-accent-foreground: #9F7E50;
-  --sidebar-border: #E7E2D8;
-  --sidebar-ring: #9F7E50;
+  --sidebar-accent: #F3ECE2;
+  --sidebar-accent-foreground: #9B7B4B;
+  --sidebar-border: rgba(29, 28, 26, 0.05);
+  --sidebar-ring: #9B7B4B;
+
+  --glow-color: rgba(155, 123, 75, 0.08);
 }
 
 .dark {
-  --background: #0B0C0E; /* Deep rich obsidian black */
-  --foreground: #F5F5F7; /* Sleek light silver/white */
-  --card: #14161B; /* Charcoal obsidian elevated card */
+  --background: #060607; /* Pitch Black */
+  --foreground: #F5F5F7; /* Apple light silver */
+  --card: rgba(13, 13, 15, 0.35); /* Translucent obsidian window */
   --card-foreground: #F5F5F7;
-  --popover: #14161B;
+  --popover: rgba(13, 13, 15, 0.95);
   --popover-foreground: #F5F5F7;
-  --primary: #D8B273; /* Warm metallic gold/brass */
-  --primary-foreground: #141008; /* High contrast dark text on gold */
-  --secondary: #1D2026; /* Deep charcoal slate */
+  --primary: #D4AF37; /* Satin Gold */
+  --primary-foreground: #060607;
+  --secondary: #131317; /* Dark slate */
   --secondary-foreground: #F5F5F7;
-  --muted: #1D2026;
-  --muted-foreground: #8E929B; /* Muted silver-grey */
-  --accent: #2C261D; /* Deep warm gold highlight tint */
-  --accent-foreground: #D8B273;
-  --destructive: #CF554C; /* Deep warm red */
-  --destructive-foreground: #ffffff;
-  --border: #2A2D35; /* Subtle dark border */
-  --input: #2A2D35;
-  --ring: #D8B273;
+  --muted: #1A1A22;
+  --muted-foreground: #8E929B;
+  --accent: rgba(212, 175, 55, 0.05);
+  --accent-foreground: #D4AF37;
+  --destructive: #D35E55;
+  --destructive-foreground: #060607;
+  --border: rgba(245, 245, 247, 0.08); /* Hairline border in dark */
+  --input: rgba(245, 245, 247, 0.06);
+  --ring: #D4AF37;
   
-  /* Sidebar dark styles */
-  --sidebar: #14161B;
+  /* Sidebar dark */
+  --sidebar: #0B0B0D;
   --sidebar-foreground: #F5F5F7;
-  --sidebar-primary: #D8B273;
-  --sidebar-primary-foreground: #141008;
-  --sidebar-accent: #1D2026;
-  --sidebar-accent-foreground: #D8B273;
-  --sidebar-border: #2A2D35;
-  --sidebar-ring: #D8B273;
+  --sidebar-primary: #D4AF37;
+  --sidebar-primary-foreground: #060607;
+  --sidebar-accent: #131317;
+  --sidebar-accent-foreground: #D4AF37;
+  --sidebar-border: rgba(245, 245, 247, 0.05);
+  --sidebar-ring: #D4AF37;
+
+  --glow-color: rgba(212, 175, 55, 0.12);
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring/50 transition-all duration-300 ease-in-out;
   }
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground font-sans antialiased overflow-x-hidden min-h-screen;
+    background-image: 
+      radial-gradient(at 0% 0%, var(--glow-color) 0px, transparent 40%),
+      radial-gradient(at 100% 100%, var(--glow-color) 0px, transparent 40%);
+    background-attachment: fixed;
   }
   html {
-    @apply font-sans;
+    @apply font-sans scroll-smooth h-full;
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply font-heading tracking-tight;
+    @apply font-serif tracking-normal font-light;
   }
+}
+
+/* Hairline division lines */
+.hairline {
+  border-width: 0px;
+  border-bottom-width: 1px;
+  border-color: var(--border);
+}
+
+/* Custom Editorial Classes */
+.font-editorial {
+  font-family: var(--font-serif-editorial);
+  letter-spacing: -0.02em;
+}
+
+.text-gold-gradient {
+  background: linear-gradient(135deg, #c5a880 0%, #f3ece2 50%, #c5a880 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.dark .text-gold-gradient {
+  background: linear-gradient(135deg, #d4af37 0%, #fff 50%, #d4af37 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Custom Glassmorphism Canvas */
+.editorial-canvas {
+  background: var(--card);
+  backdrop-filter: blur(35px) saturate(180%);
+  -webkit-backdrop-filter: blur(35px) saturate(180%);
+  border-left: 1px solid var(--border);
+}
+
+/* Apple styled scrollbars */
+.apple-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+.apple-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.apple-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(var(--foreground), 0.1);
+  border-radius: 0px;
+}
+.dark .apple-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+}
+.apple-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Ticket cutout styling */
+.ticket-edge-left {
+  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 85%, 4% 80%, 0% 75%, 0% 25%, 4% 20%, 0% 15%);
+}
+.ticket-edge-right {
+  clip-path: polygon(0% 0%, 100% 0%, 100% 15%, 96% 20%, 100% 25%, 100% 75%, 96% 80%, 100% 85%, 100% 100%, 0% 100%);
+}
+
+/* Dynamic glow button indicator */
+.btn-gold-glow:hover {
+  box-shadow: 0 0 25px rgba(212, 175, 55, 0.2);
 }

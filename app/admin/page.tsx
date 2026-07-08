@@ -20,42 +20,52 @@ export default function AdminLogin() {
   } = useAdminLogin();
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-4">
-      {/* Back to Home Button */}
+    <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-4 relative overflow-hidden transition-colors duration-300">
+      
+      {/* Background glow layers */}
+      <div className="absolute top-[-30%] left-[-20%] w-[60%] h-[60%] bg-[var(--glow-color)] rounded-full blur-[140px] pointer-events-none opacity-30" />
+      <div className="absolute bottom-[-20%] right-[-20%] w-[60%] h-[60%] bg-[var(--glow-color)] rounded-full blur-[140px] pointer-events-none opacity-20" />
+
+      {/* Back to Home Button (Editorial style) */}
       <Link 
         href="/" 
-        className="absolute top-6 left-6 inline-flex items-center gap-1.5 text-xs font-bold text-muted-foreground hover:text-primary bg-card border border-border hover:bg-secondary py-2.5 px-4.5 rounded-full transition-all duration-200"
+        className="absolute top-6 left-6 inline-flex items-center gap-2 text-[9px] tracking-widest font-bold uppercase text-muted-foreground hover:text-foreground border border-border px-4 py-2.5 transition-all duration-300"
       >
         <ArrowLeft className="w-3.5 h-3.5" />
         Volver al inicio
       </Link>
 
-      <div className="w-full max-w-[420px] z-10 space-y-6">
+      <div className="w-full max-w-[380px] z-10 space-y-6">
         
-        {/* Premium Sign-in Card */}
-        <div className="bg-card border border-border/80 sm:shadow-2xl rounded-[28px] p-8 md:p-10 space-y-7 shadow-black/[0.03]">
+        {/* Editorial Login Box */}
+        <div className="bg-secondary/15 dark:bg-black/35 border border-border p-8 md:p-10 space-y-8 relative">
           
-          {/* Brand Header */}
+          {/* Top Gold Accent Line */}
+          <div className="absolute top-0 left-0 w-full h-[2px] bg-primary" />
+
+          {/* User Icon Header */}
           <div className="flex flex-col items-center text-center gap-3">
-            <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary border border-primary/20 shadow-[0_0_15px_rgba(216,178,115,0.15)]">
-              <Scissors className="w-5.5 h-5.5" />
+            <div className="w-10 h-10 rounded-full border border-primary/20 flex items-center justify-center text-primary bg-primary/5 shrink-0">
+              <Scissors className="w-4 h-4" />
             </div>
-            <div className="space-y-1.5">
-              <h1 className="text-xl font-bold tracking-tight text-foreground font-heading">
-                Portal de Administración
+            <div className="space-y-1">
+              <h1 className="text-base font-extrabold tracking-widest uppercase text-foreground">
+                CONSOLA ADMIN
               </h1>
-              <p className="text-xs text-muted-foreground">
-                Inicia sesión para gestionar citas, horarios y clientes de la barbería.
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground leading-relaxed">
+                Inicia sesión para administrar la agenda y barberos.
               </p>
             </div>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-4.5">
+          <form onSubmit={handleLogin} className="space-y-6">
             {/* Email Field */}
-            <div className="space-y-1.5">
-              <Label htmlFor="email" className="text-xs font-semibold text-foreground/80 pl-1">Correo electrónico</Label>
+            <div className="space-y-1">
+              <Label htmlFor="email" className="text-[9px] font-extrabold uppercase tracking-widest text-muted-foreground pl-0.5">
+                Correo electrónico
+              </Label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-3.5 w-4 h-4 text-muted-foreground" />
+                <Mail className="absolute left-0 top-3.5 w-4 h-4 text-muted-foreground/60" />
                 <Input
                   id="email"
                   type="email"
@@ -63,16 +73,18 @@ export default function AdminLogin() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="pl-10 bg-card border-border text-foreground placeholder-muted-foreground/60 focus-visible:ring-primary/30 focus-visible:border-primary py-6 rounded-xl text-sm"
+                  className="pl-7 border-0 border-b border-border hover:border-foreground focus-visible:border-primary focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent rounded-none px-0 py-4 text-xs tracking-wider transition-all w-full"
                 />
               </div>
             </div>
 
             {/* Password Field */}
-            <div className="space-y-1.5">
-              <Label htmlFor="password" className="text-xs font-semibold text-foreground/80 pl-1">Contraseña</Label>
+            <div className="space-y-1">
+              <Label htmlFor="password" className="text-[9px] font-extrabold uppercase tracking-widest text-muted-foreground pl-0.5">
+                Contraseña
+              </Label>
               <div className="relative">
-                <Lock className="absolute left-3.5 top-3.5 w-4 h-4 text-muted-foreground" />
+                <Lock className="absolute left-0 top-3.5 w-4 h-4 text-muted-foreground/60" />
                 <Input
                   id="password"
                   type="password"
@@ -80,40 +92,40 @@ export default function AdminLogin() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="pl-10 bg-card border-border text-foreground placeholder-muted-foreground/60 focus-visible:ring-primary/30 focus-visible:border-primary py-6 rounded-xl text-sm"
+                  className="pl-7 border-0 border-b border-border hover:border-foreground focus-visible:border-primary focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent rounded-none px-0 py-4 text-xs tracking-wider transition-all w-full"
                 />
               </div>
             </div>
 
             {errorMessage && (
-              <div className="p-3.5 bg-destructive/10 border border-destructive/20 rounded-xl text-xs text-destructive">
+              <div className="p-3 bg-destructive/10 border border-destructive/20 text-xs text-destructive uppercase tracking-widest font-bold">
                 {errorMessage}
               </div>
             )}
 
-            {/* Actions Bar */}
+            {/* Acceder Button */}
             <div className="pt-2">
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-primary hover:bg-primary/95 text-primary-foreground font-bold py-6 rounded-full flex items-center justify-center gap-2 text-sm shadow-md shadow-primary/10 transition-all duration-200"
+                className="w-full bg-primary hover:bg-primary/95 text-primary-foreground font-bold py-6 rounded-none flex items-center justify-center gap-2 text-xs uppercase tracking-widest transition-all duration-300 hover:shadow-lg active:scale-[0.99] cursor-pointer border border-primary"
               >
                 {isLoading ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Verificando...
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    Autenticando...
                   </>
                 ) : (
-                  "Acceder al Panel"
+                  "Iniciar Sesión"
                 )}
               </Button>
             </div>
           </form>
         </div>
 
-        {/* Footer Links Premium Style */}
-        <div className="flex items-center justify-between text-[10px] text-muted-foreground/80 px-4">
-          <span>© {new Date().getFullYear()} Magic Barber Shop</span>
+        {/* Footer */}
+        <div className="flex items-center justify-between text-[9px] text-muted-foreground/80 uppercase tracking-widest px-1">
+          <span>© {new Date().getFullYear()} Magic Barber</span>
           <div className="flex gap-4">
             <Link href="/" className="hover:text-primary transition-colors">Volver al Inicio</Link>
           </div>
