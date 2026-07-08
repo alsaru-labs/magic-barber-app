@@ -11,7 +11,7 @@ export interface ServiceType {
   description: string;
   price: string;
   duration: string;
-  colorClass: string;
+  colorClass?: string;
 }
 
 export function useBooking() {
