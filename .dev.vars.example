@@ -1,0 +1,17 @@
+# Copia este archivo a `.dev.vars` para desarrollo local (NO se sube a git).
+# Lo leen tanto `next dev` (vía initOpenNextCloudflareForDev) como `wrangler dev`/`npm run preview`.
+
+# Clave secreta de TEST de Turnstile que siempre valida.
+# (Para forzar fallo: 2x0000000000000000000000000000000AA)
+TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
+
+# Hash de la contraseña del admin. Genera el tuyo con:
+#   npm run hash-password -- "tu-contraseña"
+# El de ejemplo corresponde a la contraseña: barber123
+ADMIN_PASSWORD_HASH=pbkdf2:100000:y9KU/fNfsL/sFtMGq8WEzA==:RX+lzHlH9XkwoATYvoy486fXSUaX4Wr1FahcrshnqKo=
+
+# Mínimo 32 caracteres aleatorios. Ej.: node -e "console.log(crypto.randomBytes(32).toString('base64url'))"
+SESSION_SECRET=dev-only-secret-change-me-0123456789abcdef
+
+# Opcional: avisos por email al barbero
+# RESEND_API_KEY=re_xxxxxxxxx

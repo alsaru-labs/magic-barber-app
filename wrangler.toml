@@ -1,0 +1,54 @@
+#:schema node_modules/wrangler/config-schema.json
+# -----------------------------------------------------------------------------
+# Magic Barber — Cloudflare Worker (Next.js vía @opennextjs/cloudflare)
+# -----------------------------------------------------------------------------
+name = "magic-barber"
+main = ".open-next/worker.js"
+compatibility_date = "2026-10-01"
+compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
+
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
+
+[observability]
+enabled = true
+
+# Necesario para que Next.js pueda llamarse a sí mismo (revalidaciones, etc.)
+[[services]]
+binding = "WORKER_SELF_REFERENCE"
+service = "magic-barber"
+
+# -----------------------------------------------------------------------------
+# Base de datos D1
+#   1) npx wrangler d1 create magic-barber-db
+#   2) Copia el database_id devuelto aquí abajo
+#   3) npm run db:migrate:remote
+# -----------------------------------------------------------------------------
+[[d1_databases]]
+binding = "DB"
+database_name = "magic-barber-db"
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "migrations"
+
+# -----------------------------------------------------------------------------
+# Variables NO secretas (visibles en el dashboard de Cloudflare)
+# -----------------------------------------------------------------------------
+[vars]
+# Número del barbero en formato internacional SIN '+' ni espacios (para wa.me)
+BARBER_WHATSAPP = "34600000000"
+# Site key pública de Turnstile (la de abajo es la clave de TEST "siempre pasa")
+TURNSTILE_SITE_KEY = "1x00000000000000000000AA"
+ADMIN_USER = "admin"
+# Email del barbero para avisos vía Resend (opcional)
+BARBER_EMAIL = ""
+RESEND_FROM = "Magic Barber <reservas@tu-dominio.com>"
+
+# -----------------------------------------------------------------------------
+# SECRETOS (NO ponerlos aquí). Configúralos con:
+#   npx wrangler secret put TURNSTILE_SECRET_KEY
+#   npx wrangler secret put ADMIN_PASSWORD_HASH   (genera con: npm run hash-password)
+#   npx wrangler secret put SESSION_SECRET        (mín. 32 caracteres aleatorios)
+#   npx wrangler secret put RESEND_API_KEY        (opcional)
+# En local se leen de .dev.vars (ver .dev.vars.example)
+# -----------------------------------------------------------------------------
