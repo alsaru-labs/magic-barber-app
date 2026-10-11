@@ -28,8 +28,10 @@ export interface Cita {
 
 export async function getDB(): Promise<D1Database> {
   const env = await getEnv();
-  if (!env.DB) throw new Error("Binding D1 'DB' no configurado (revisa wrangler.toml).");
-  return env.DB;
+  const raw = env as unknown as Record<string, unknown>;
+  const db = (env.DB ?? raw["magic-barber-db"] ?? raw["magic_barber_db"]) as D1Database | undefined;
+  if (!db) throw new Error("Binding D1 'DB' no configurado (revisa wrangler.toml).");
+  return db;
 }
 
 /** Minutos desde medianoche de la columna `hora` ('HH:MM') de un alias de tabla */

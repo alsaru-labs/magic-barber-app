@@ -2,7 +2,7 @@
 # -----------------------------------------------------------------------------
 # Magic Barber — Cloudflare Worker (Next.js vía @opennextjs/cloudflare)
 # -----------------------------------------------------------------------------
-name = "magic-barber"
+name = "magic-barber-app"
 main = ".open-next/worker.js"
 compatibility_date = "2026-10-01"
 compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
@@ -17,7 +17,7 @@ enabled = true
 # Necesario para que Next.js pueda llamarse a sí mismo (revalidaciones, etc.)
 [[services]]
 binding = "WORKER_SELF_REFERENCE"
-service = "magic-barber"
+service = "magic-barber-app"
 
 # -----------------------------------------------------------------------------
 # Base de datos D1
@@ -26,7 +26,7 @@ service = "magic-barber"
 #   3) npm run db:migrate:remote
 # -----------------------------------------------------------------------------
 [[d1_databases]]
-binding = "magic-barber-db"
+binding = "DB"
 database_name = "magic-barber-db"
 database_id = "dcf1f0a7-1ca0-4bab-898f-0d6c31f4804e"
 migrations_dir = "migrations"

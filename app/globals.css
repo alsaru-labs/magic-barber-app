@@ -76,3 +76,61 @@
   background-clip: text;
   color: transparent;
 }
+
+@utility text-liquid-gold {
+  background: linear-gradient(135deg, #fff9e6 0%, #fde047 45%, #ca8a04 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility liquid-glass {
+  background-color: rgba(255, 255, 255, 0.035);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-top-color: rgba(255, 255, 255, 0.22);
+  box-shadow: 
+    0 24px 50px -12px rgba(0, 0, 0, 0.65),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.4);
+}
+
+@utility liquid-glass-subtle {
+  background-color: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-top-color: rgba(255, 255, 255, 0.16);
+  box-shadow: 
+    0 12px 30px -8px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.15);
+}
+
+@utility liquid-glass-pill {
+  background: radial-gradient(120% 120% at 50% 0%, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-top-color: rgba(255, 255, 255, 0.26);
+  box-shadow: 
+    0 10px 30px -5px rgba(0, 0, 0, 0.4),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+@utility liquid-glass-interactive {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.2);
+    border-top-color: rgba(255, 255, 255, 0.35);
+    box-shadow: 
+      0 20px 40px -10px rgba(0, 0, 0, 0.6),
+      inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+  }
+}
+
+@utility shadow-liquid-glow {
+  box-shadow: 0 0 35px -5px rgba(250, 204, 21, 0.3);
+}

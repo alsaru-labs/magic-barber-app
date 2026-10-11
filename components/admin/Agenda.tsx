@@ -10,7 +10,6 @@ import {
   MessageCircle,
   CheckCircle2,
   XCircle,
-  AlertCircle,
   RotateCcw,
   Scissors,
   Loader2,
@@ -18,8 +17,6 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Cita } from "@/lib/d1";
 import type { EstadoCita } from "@/lib/config";
@@ -172,40 +169,61 @@ export default function AdminAgenda() {
   return (
     <div className="space-y-6">
       {/* Barra de control superior */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-card/60 p-4 rounded-xl border border-border/40 backdrop-blur">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 liquid-glass p-3 sm:p-4.5 rounded-3xl border border-white/12 shadow-2xl">
         {/* Selector de modo y filtros */}
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex items-center justify-between sm:justify-start gap-2.5">
           <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as ViewMode)}>
-            <TabsList>
-              <TabsTrigger value="dia">Día</TabsTrigger>
-              <TabsTrigger value="semana">Semana</TabsTrigger>
+            <TabsList className="h-9 bg-white/[0.04] border border-white/10 rounded-2xl p-0.5">
+              <TabsTrigger
+                value="dia"
+                className="text-xs px-3.5 rounded-xl data-[state=active]:bg-amber-400 data-[state=active]:text-stone-950 data-[state=active]:font-bold data-[state=active]:shadow-md transition-all"
+              >
+                Día
+              </TabsTrigger>
+              <TabsTrigger
+                value="semana"
+                className="text-xs px-3.5 rounded-xl data-[state=active]:bg-amber-400 data-[state=active]:text-stone-950 data-[state=active]:font-bold data-[state=active]:shadow-md transition-all"
+              >
+                Semana
+              </TabsTrigger>
             </TabsList>
           </Tabs>
 
-          <div className="flex items-center gap-1.5 bg-muted/40 rounded-lg p-1 border border-border/30">
-            <Filter className="size-3.5 text-muted-foreground ml-1.5" />
+          <div className="flex items-center gap-1.5 liquid-glass-subtle rounded-xl px-2 py-1 border border-white/10 h-9">
+            <Filter className="size-3.5 text-amber-400 ml-1" />
             <select
               value={scope}
               onChange={(e) => setScope(e.target.value as ScopeFilter)}
-              className="bg-transparent text-xs text-foreground font-medium py-1 px-2 focus:outline-none cursor-pointer"
+              className="bg-transparent text-xs text-foreground font-medium py-1 px-1.5 focus:outline-none cursor-pointer"
             >
-              <option value="todas" className="bg-card">Todas las citas</option>
-              <option value="futuras" className="bg-card">Solo futuras</option>
-              <option value="pasadas" className="bg-card">Solo pasadas</option>
+              <option value="todas" className="bg-stone-900 text-foreground">Todas</option>
+              <option value="futuras" className="bg-stone-900 text-foreground">Solo futuras</option>
+              <option value="pasadas" className="bg-stone-900 text-foreground">Solo pasadas</option>
             </select>
           </div>
         </div>
 
         {/* Navegación temporal */}
-        <div className="flex items-center justify-between lg:justify-end gap-2">
-          <Button variant="outline" size="sm" onClick={handleToday}>
+        <div className="flex items-center justify-between sm:justify-end gap-1.5 pt-2 sm:pt-0 border-t sm:border-t-0 border-white/10">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleToday}
+            className="h-9 text-xs px-3.5 font-semibold text-amber-300 liquid-glass-subtle liquid-glass-interactive rounded-xl border border-white/10 touch-manipulation"
+          >
             Hoy
           </Button>
-          <div className="flex items-center gap-1">
-            <Button variant="ghost" size="icon" onClick={handlePrev} title="Anterior">
+          <div className="flex items-center gap-1 flex-1 sm:flex-initial justify-center">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handlePrev}
+              title="Anterior"
+              className="size-9 shrink-0 liquid-glass-subtle liquid-glass-interactive rounded-xl touch-manipulation"
+            >
               <ChevronLeft className="size-4" />
             </Button>
-            <div className="min-w-36 text-center font-medium text-sm">
+            <div className="text-center font-bold text-xs sm:text-sm px-1.5 min-w-28 sm:min-w-36 truncate text-foreground">
               {viewMode === "dia" ? (
                 <span className="capitalize">{formatFechaLarga(selectedDate)}</span>
               ) : (
@@ -214,7 +232,13 @@ export default function AdminAgenda() {
                 </span>
               )}
             </div>
-            <Button variant="ghost" size="icon" onClick={handleNext} title="Siguiente">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleNext}
+              title="Siguiente"
+              className="size-9 shrink-0 liquid-glass-subtle liquid-glass-interactive rounded-xl touch-manipulation"
+            >
               <ChevronRight className="size-4" />
             </Button>
           </div>
@@ -225,75 +249,56 @@ export default function AdminAgenda() {
             onClick={fetchCitas}
             disabled={loading}
             title="Recargar agenda"
+            className="size-9 shrink-0 liquid-glass-subtle liquid-glass-interactive rounded-xl touch-manipulation"
           >
-            <RotateCcw className={cn("size-4", loading && "animate-spin")} />
+            <RotateCcw className={cn("size-4 text-amber-400", loading && "animate-spin")} />
           </Button>
         </div>
       </div>
 
       {/* Tarjetas de Estadísticas Rápidas */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <Card className="bg-card/40 py-3 gap-1">
-          <CardHeader className="py-0 px-4">
-            <span className="text-xs text-muted-foreground">Total Citas</span>
-          </CardHeader>
-          <CardContent className="py-0 px-4">
-            <span className="text-2xl font-bold font-display">{stats.total}</span>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3.5">
+        <div className="liquid-glass-subtle liquid-glass-interactive rounded-2xl p-3 sm:p-4 border border-white/10 space-y-1">
+          <span className="text-[11px] sm:text-xs text-muted-foreground block font-medium">Total Citas</span>
+          <span className="text-xl sm:text-2xl font-bold font-display text-foreground block">{stats.total}</span>
+        </div>
 
-        <Card className="bg-card/40 py-3 gap-1 border-warning/30">
-          <CardHeader className="py-0 px-4">
-            <span className="text-xs text-warning">Pendientes</span>
-          </CardHeader>
-          <CardContent className="py-0 px-4">
-            <span className="text-2xl font-bold font-display text-warning">
-              {stats.pendientes}
-            </span>
-          </CardContent>
-        </Card>
+        <div className="liquid-glass-subtle liquid-glass-interactive rounded-2xl p-3 sm:p-4 border border-amber-400/35 bg-amber-400/[0.05] space-y-1 shadow-[0_4px_20px_rgba(250,204,21,0.08)]">
+          <span className="text-[11px] sm:text-xs text-amber-300 block font-medium">Pendientes</span>
+          <span className="text-xl sm:text-2xl font-bold font-display text-amber-300 block">{stats.pendientes}</span>
+        </div>
 
-        <Card className="bg-card/40 py-3 gap-1 border-success/30">
-          <CardHeader className="py-0 px-4">
-            <span className="text-xs text-success">Confirmadas</span>
-          </CardHeader>
-          <CardContent className="py-0 px-4">
-            <span className="text-2xl font-bold font-display text-success">
-              {stats.confirmadas}
-            </span>
-          </CardContent>
-        </Card>
+        <div className="liquid-glass-subtle liquid-glass-interactive rounded-2xl p-3 sm:p-4 border border-emerald-400/35 bg-emerald-400/[0.05] space-y-1 shadow-[0_4px_20px_rgba(52,211,153,0.08)]">
+          <span className="text-[11px] sm:text-xs text-emerald-400 block font-medium">Confirmadas</span>
+          <span className="text-xl sm:text-2xl font-bold font-display text-emerald-400 block">{stats.confirmadas}</span>
+        </div>
 
-        <Card className="bg-card/40 py-3 gap-1 border-destructive/30">
-          <CardHeader className="py-0 px-4">
-            <span className="text-xs text-destructive">Canceladas</span>
-          </CardHeader>
-          <CardContent className="py-0 px-4">
-            <span className="text-2xl font-bold font-display text-destructive">
-              {stats.canceladas}
-            </span>
-          </CardContent>
-        </Card>
+        <div className="liquid-glass-subtle liquid-glass-interactive rounded-2xl p-3 sm:p-4 border border-rose-400/35 bg-rose-400/[0.05] space-y-1">
+          <span className="text-[11px] sm:text-xs text-rose-400 block font-medium">Canceladas</span>
+          <span className="text-xl sm:text-2xl font-bold font-display text-rose-400 block">{stats.canceladas}</span>
+        </div>
       </div>
 
       {/* Lista / Grilla de citas */}
       {loading && citas.length === 0 ? (
         <div className="p-12 text-center text-muted-foreground flex flex-col items-center justify-center gap-2">
-          <Loader2 className="size-6 animate-spin text-primary" />
+          <Loader2 className="size-6 animate-spin text-amber-400" />
           <span className="text-sm">Cargando citas de la agenda…</span>
         </div>
       ) : citas.length === 0 ? (
-        <Card className="bg-card/30 border-dashed text-center p-12">
+        <div className="liquid-glass-subtle rounded-3xl border border-dashed border-white/15 text-center p-12">
           <div className="flex flex-col items-center justify-center gap-3 text-muted-foreground">
-            <CalendarIcon className="size-10 stroke-1" />
+            <div className="size-14 rounded-full liquid-glass-pill flex items-center justify-center text-amber-300 shadow-[0_0_20px_rgba(250,204,21,0.15)]">
+              <CalendarIcon className="size-6 stroke-1" />
+            </div>
             <p className="font-medium text-base text-foreground">
               No hay citas para este periodo o filtro.
             </p>
-            <p className="text-xs">
-              Las reservas hechas por clientes aparecerán automáticamente aquí.
+            <p className="text-xs text-muted-foreground/80 max-w-sm">
+              Las reservas hechas por clientes aparecerán automáticamente aquí en tiempo real.
             </p>
           </div>
-        </Card>
+        </div>
       ) : (
         <div className="space-y-6">
           {Object.entries(citasPorDia).map(([fecha, lista]) => {
@@ -302,12 +307,12 @@ export default function AdminAgenda() {
             return (
               <div key={fecha} className="space-y-3">
                 {viewMode === "semana" && (
-                  <div className="sticky top-16 z-10 bg-background/95 backdrop-blur py-2 border-b border-border/30 flex items-center justify-between">
-                    <h3 className="font-display font-semibold text-lg capitalize flex items-center gap-2">
-                      <CalendarIcon className="size-4 text-primary" />
+                  <div className="sticky top-20 z-10 liquid-glass rounded-2xl px-4 py-2.5 border border-white/12 flex items-center justify-between shadow-xl">
+                    <h3 className="font-display font-semibold text-base sm:text-lg capitalize flex items-center gap-2">
+                      <CalendarIcon className="size-4 text-amber-400" />
                       {formatFechaLarga(fecha)}
                     </h3>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-xs text-muted-foreground font-medium liquid-glass-pill px-2.5 py-0.5 rounded-full">
                       {lista.length} {lista.length === 1 ? "cita" : "citas"}
                     </span>
                   </div>
@@ -355,64 +360,78 @@ function CitaCard({
   return (
     <div
       className={cn(
-        "p-4 rounded-xl border bg-card/60 backdrop-blur transition-all flex flex-col md:flex-row md:items-center justify-between gap-4",
-        cita.estado === "cancelada" && "opacity-60 bg-muted/20 border-dashed",
-        cita.estado === "pendiente" && "border-warning/30 bg-warning/5",
-        cita.estado === "confirmada" && "border-success/30 bg-success/5"
+        "p-3.5 sm:p-4.5 rounded-2xl transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 border",
+        cita.estado === "cancelada" && "opacity-55 liquid-glass-subtle border-dashed border-white/10",
+        cita.estado === "pendiente" && "liquid-glass border-amber-400/35 bg-amber-400/[0.04] shadow-[0_6px_25px_rgba(250,204,21,0.08)]",
+        cita.estado === "confirmada" && "liquid-glass border-emerald-400/35 bg-emerald-400/[0.04] shadow-[0_6px_25px_rgba(52,211,153,0.08)]"
       )}
     >
       {/* Columna Izquierda: Hora, Servicio y Datos del cliente */}
-      <div className="flex items-start gap-4">
+      <div className="flex items-start gap-3 sm:gap-4 min-w-0">
         {/* Bloque de hora */}
-        <div className="size-14 rounded-lg bg-background/80 border border-border/40 flex flex-col items-center justify-center shrink-0">
-          <span className="text-sm font-bold font-mono text-foreground leading-tight">
+        <div className="size-12 sm:size-14 rounded-2xl liquid-glass-pill border-white/20 flex flex-col items-center justify-center shrink-0 shadow-md">
+          <span className="text-xs sm:text-sm font-bold font-mono text-foreground leading-tight">
             {cita.hora}
           </span>
           <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
-            <Clock className="size-2.5" /> {cita.duracion_min}m
+            <Clock className="size-2.5 text-amber-400" /> {cita.duracion_min}m
           </span>
         </div>
 
         {/* Info */}
-        <div className="space-y-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="font-semibold text-base text-foreground">
+        <div className="space-y-1 min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+            <span className="font-semibold text-sm sm:text-base text-foreground truncate">
               {cita.nombre} {cita.apellidos}
             </span>
-            <Badge variant={cita.estado} className="capitalize text-[10px]">
+            <span
+              className={cn(
+                "capitalize text-[10px] font-semibold tracking-wide px-2 py-0.5 rounded-full border",
+                cita.estado === "pendiente" && "bg-amber-400/15 text-amber-300 border-amber-400/30",
+                cita.estado === "confirmada" && "bg-emerald-400/15 text-emerald-300 border-emerald-400/30",
+                cita.estado === "cancelada" && "bg-rose-400/15 text-rose-300 border-rose-400/25"
+              )}
+            >
               {cita.estado}
-            </Badge>
+            </span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1.5 text-foreground/80">
-              <Scissors className="size-3.5 text-primary" />
-              {cita.servicio}
+          <div className="flex flex-wrap items-center gap-x-3 sm:gap-x-4 gap-y-1 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1.5 text-foreground/90 font-medium">
+              <Scissors className="size-3.5 text-amber-400 shrink-0" />
+              <span className="truncate">{cita.servicio}</span>
             </span>
-            <span className="flex items-center gap-1.5">
-              <Phone className="size-3 text-muted-foreground" />
-              +{cita.telefono_whatsapp}
-            </span>
+            <a
+              href={`tel:+${cita.telefono_whatsapp}`}
+              className="flex items-center gap-1 hover:text-amber-300 transition-colors"
+            >
+              <Phone className="size-3 text-muted-foreground shrink-0" />
+              <span>+{cita.telefono_whatsapp}</span>
+            </a>
           </div>
         </div>
       </div>
 
-      {/* Columna Derecha: Acciones rápidas */}
-      <div className="flex flex-wrap items-center gap-2 pt-2 md:pt-0 border-t md:border-t-0 border-border/30">
+      {/* Columna Derecha: Acciones rápidas ergonómicas para móvil */}
+      <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 pt-2.5 md:pt-0 border-t md:border-t-0 border-white/10 w-full md:w-auto">
         {/* Contactar por WhatsApp */}
         <Button
           asChild
           variant="whatsapp"
           size="sm"
-          className="text-xs h-8 px-3"
+          className={cn(
+            "text-xs h-9 sm:h-8.5 px-3 rounded-xl shadow-[0_0_18px_rgba(37,211,102,0.3)] active:scale-95 touch-manipulation font-semibold",
+            cita.estado === "pendiente" ? "col-span-2 sm:col-span-1" : "col-span-1"
+          )}
         >
           <a
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
             title="Abrir WhatsApp para contactar al cliente"
+            className="flex items-center justify-center gap-1.5"
           >
-            <MessageCircle className="size-3.5" />
+            <MessageCircle className="size-3.5 shrink-0" />
             WhatsApp
           </a>
         </Button>
@@ -420,39 +439,39 @@ function CitaCard({
         {/* Acciones de cambio de estado */}
         {cita.estado !== "confirmada" && (
           <Button
-            variant="outline"
+            variant="ghost"
             size="sm"
             disabled={isUpdating}
             onClick={() => onUpdateEstado(cita.id, "confirmada")}
-            className="text-xs h-8 border-success/40 text-success hover:bg-success/10 hover:text-success"
+            className="text-xs h-9 sm:h-8.5 rounded-xl border border-emerald-400/40 text-emerald-400 hover:bg-emerald-400/15 hover:text-emerald-300 active:scale-95 touch-manipulation w-full sm:w-auto liquid-glass-subtle font-medium"
           >
-            <CheckCircle2 className="size-3.5" />
+            <CheckCircle2 className="size-3.5 shrink-0" />
             Confirmar
           </Button>
         )}
 
         {cita.estado !== "cancelada" && (
           <Button
-            variant="outline"
+            variant="ghost"
             size="sm"
             disabled={isUpdating}
             onClick={() => onUpdateEstado(cita.id, "cancelada")}
-            className="text-xs h-8 border-destructive/40 text-destructive hover:bg-destructive/10 hover:text-destructive"
+            className="text-xs h-9 sm:h-8.5 rounded-xl border border-rose-400/40 text-rose-400 hover:bg-rose-400/15 hover:text-rose-300 active:scale-95 touch-manipulation w-full sm:w-auto liquid-glass-subtle font-medium"
           >
-            <XCircle className="size-3.5" />
+            <XCircle className="size-3.5 shrink-0" />
             Cancelar
           </Button>
         )}
 
         {cita.estado === "cancelada" && (
           <Button
-            variant="outline"
+            variant="ghost"
             size="sm"
             disabled={isUpdating}
             onClick={() => onUpdateEstado(cita.id, "pendiente")}
-            className="text-xs h-8 text-muted-foreground hover:text-foreground"
+            className="text-xs h-9 sm:h-8.5 rounded-xl border border-amber-400/40 text-amber-300 hover:bg-amber-400/15 hover:text-amber-200 active:scale-95 touch-manipulation w-full sm:w-auto liquid-glass-subtle font-medium"
           >
-            <AlertCircle className="size-3.5" />
+            <RotateCcw className="size-3.5 shrink-0" />
             Reactivar
           </Button>
         )}
