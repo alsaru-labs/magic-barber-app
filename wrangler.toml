@@ -37,7 +37,7 @@ migrations_dir = "migrations"
 [vars]
 # Número del barbero en formato internacional SIN '+' ni espacios (para wa.me)
 BARBER_WHATSAPP = "34600000000"
-# Site key pública de Turnstile (la de abajo es la clave de TEST "siempre pasa")
+# Site key pública de Turnstile para producción
 TURNSTILE_SITE_KEY = "0x4AAAAAAFTyn1J9MEBArA_I"
 ADMIN_USER = "admin"
 # Email del barbero para avisos vía Resend (opcional)

@@ -1,14 +1,27 @@
 import Link from "next/link";
 import { Scissors, MapPin, Clock, ShieldCheck, Sparkles, CheckCircle2, Zap } from "lucide-react";
 import BookingForm from "@/components/BookingForm";
+import { headers } from "next/headers";
 import { BUSINESS } from "@/lib/config";
 import { getVar } from "@/lib/env";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const turnstileSiteKey =
-    (await getVar("TURNSTILE_SITE_KEY")) ?? "1x00000000000000000000AA";
+  const reqHeaders = await headers();
+  const host = reqHeaders.get("host") ?? "";
+  const isLocalDev =
+    (process.env.NODE_ENV !== "production" ||
+      host.includes("localhost") ||
+      host.includes("127.0.0.1")) &&
+    process.env.FORCE_PROD_TURNSTILE !== "true";
+
+  const configuredKey = await getVar("TURNSTILE_SITE_KEY");
+  // En entorno local usamos siempre la clave de test oficial de Cloudflare (1x00000000000000000000AA)
+  // para evitar el error 400 Bad Request por restricciones de dominio en localhost.
+  const turnstileSiteKey = isLocalDev
+    ? "1x00000000000000000000AA"
+    : (configuredKey ?? "1x00000000000000000000AA");
 
   return (
     <div className="relative min-h-screen text-foreground flex flex-col selection:bg-amber-400/20 selection:text-amber-300 overflow-x-hidden">

@@ -46,7 +46,7 @@ next-env.d.ts
 .dev.vars
 .dev.vars.*
 !.dev.vars.example
-
+.dev.vars.example
 # windows
 Thumbs.db
 [Dd]esktop.ini
