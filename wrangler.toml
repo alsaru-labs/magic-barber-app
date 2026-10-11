@@ -26,9 +26,9 @@ service = "magic-barber"
 #   3) npm run db:migrate:remote
 # -----------------------------------------------------------------------------
 [[d1_databases]]
-binding = "DB"
+binding = "magic-barber-db"
 database_name = "magic-barber-db"
-database_id = "00000000-0000-0000-0000-000000000000"
+database_id = "dcf1f0a7-1ca0-4bab-898f-0d6c31f4804e"
 migrations_dir = "migrations"
 
 # -----------------------------------------------------------------------------
@@ -38,7 +38,7 @@ migrations_dir = "migrations"
 # Número del barbero en formato internacional SIN '+' ni espacios (para wa.me)
 BARBER_WHATSAPP = "34600000000"
 # Site key pública de Turnstile (la de abajo es la clave de TEST "siempre pasa")
-TURNSTILE_SITE_KEY = "1x00000000000000000000AA"
+TURNSTILE_SITE_KEY = "0x4AAAAAAFTyn1J9MEBArA_I"
 ADMIN_USER = "admin"
 # Email del barbero para avisos vía Resend (opcional)
 BARBER_EMAIL = ""
