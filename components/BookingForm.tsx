@@ -97,6 +97,7 @@ const EMPTY_AVAILABILITY: AvailabilityState = { loading: false, error: null, abi
 // ---------------------------------------------------------------------------
 
 export default function BookingForm({ turnstileSiteKey }: { turnstileSiteKey: string }) {
+  const isDevMode = turnstileSiteKey === "1x00000000000000000000AA";
   const [step, setStep] = useState<Step>(1);
   const [servicio, setServicio] = useState<Service | null>(null);
   const [fecha, setFecha] = useState<string | null>(null);
@@ -106,7 +107,9 @@ export default function BookingForm({ turnstileSiteKey }: { turnstileSiteKey: st
 
   const [contact, setContact] = useState<ContactForm>({ nombre: "", apellidos: "", telefono: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(
+    isDevMode ? "XXXX.DUMMY.TOKEN.XXXX" : null,
+  );
   const [turnstileError, setTurnstileError] = useState(false);
   const turnstileRef = useRef<TurnstileInstance | null>(null);
 
@@ -145,6 +148,11 @@ export default function BookingForm({ turnstileSiteKey }: { turnstileSiteKey: st
   }, []);
 
   const resetTurnstile = () => {
+    if (isDevMode) {
+      setTurnstileToken("XXXX.DUMMY.TOKEN.XXXX");
+      setTurnstileError(false);
+      return;
+    }
     setTurnstileToken(null);
     turnstileRef.current?.reset();
   };
@@ -209,6 +217,10 @@ export default function BookingForm({ turnstileSiteKey }: { turnstileSiteKey: st
     setContact({ nombre: "", apellidos: "", telefono: "" });
     setErrors({});
     setAvailability(EMPTY_AVAILABILITY);
+    if (isDevMode) {
+      setTurnstileToken("XXXX.DUMMY.TOKEN.XXXX");
+      setTurnstileError(false);
+    }
     goTo(1);
   }
 
@@ -288,41 +300,53 @@ export default function BookingForm({ turnstileSiteKey }: { turnstileSiteKey: st
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Turnstile
-                  ref={turnstileRef}
-                  siteKey={turnstileSiteKey}
-                  options={{ action: "reserva", theme: "dark", size: "flexible", language: "es", appearance: "interaction-only" }}
-                  onSuccess={(t) => {
-                    setTurnstileToken(t);
-                    setTurnstileError(false);
-                  }}
-                  onExpire={() => setTurnstileToken(null)}
-                  onError={() => {
-                    setTurnstileToken(null);
-                    setTurnstileError(true);
-                  }}
-                />
-                <p className="text-muted-foreground flex items-center gap-2 text-xs">
-                  {turnstileError ? (
-                    <>
-                      <ShieldCheck className="text-destructive size-3.5" />
-                      Error en la verificación.{" "}
-                      <button type="button" className="text-amber-400 underline" onClick={resetTurnstile}>
-                        Reintentar
-                      </button>
-                    </>
-                  ) : turnstileToken ? (
-                    <>
-                      <ShieldCheck className="text-emerald-400 size-3.5" /> Verificación completada
-                    </>
-                  ) : (
-                    <>
-                      <Loader2 className="size-3.5 animate-spin text-amber-400" /> Verificando que no eres un robot…
-                    </>
-                  )}
-                </p>
-              </div>
+              {isDevMode ? (
+                <div className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 text-xs text-emerald-300">
+                  <ShieldCheck className="size-4 text-emerald-400 shrink-0" />
+                  <div>
+                    <span className="font-semibold text-emerald-200 block">Verificación de seguridad activa</span>
+                    <span className="text-[11px] text-emerald-400/80">Modo desarrollo local (Turnstile dummy habilitado)</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-2 flex flex-col items-center sm:items-start">
+                  <div className="overflow-hidden rounded-xl border border-white/10 bg-black/20 p-1">
+                    <Turnstile
+                      ref={turnstileRef}
+                      siteKey={turnstileSiteKey}
+                      options={{ action: "reserva", theme: "dark", language: "es", size: "normal" }}
+                      onSuccess={(t) => {
+                        setTurnstileToken(t);
+                        setTurnstileError(false);
+                      }}
+                      onExpire={() => setTurnstileToken(null)}
+                      onError={() => {
+                        setTurnstileToken(null);
+                        setTurnstileError(true);
+                      }}
+                    />
+                  </div>
+                  <div className="text-muted-foreground flex flex-wrap items-center gap-2 text-xs">
+                    {turnstileError ? (
+                      <>
+                        <ShieldCheck className="text-destructive size-3.5" />
+                        <span>Error en la verificación.</span>
+                        <button type="button" className="text-amber-400 underline" onClick={resetTurnstile}>
+                          Reintentar
+                        </button>
+                      </>
+                    ) : turnstileToken ? (
+                      <>
+                        <ShieldCheck className="text-emerald-400 size-3.5" /> Verificación completada
+                      </>
+                    ) : (
+                      <>
+                        <Loader2 className="size-3.5 animate-spin text-amber-400" /> Verificando que no eres un robot…
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
 
               <div className="flex flex-col-reverse gap-2.5 sm:flex-row sm:justify-between pt-1">
                 <Button type="button" variant="ghost" size="lg" onClick={() => goTo(2)} disabled={submitting} className="w-full sm:w-auto h-11 sm:h-10 text-sm liquid-glass-subtle liquid-glass-interactive rounded-xl">

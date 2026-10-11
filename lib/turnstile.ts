@@ -29,8 +29,13 @@ export async function verifyTurnstile(
     token === "1x00000000000000000000AA";
   const isDev = process.env.NODE_ENV !== "production";
 
+  // En entorno de desarrollo con token de test, validamos directamente para evitar bloqueos por red
+  if (isDev && isTestToken) {
+    return { ok: true };
+  }
+
   if ((isTestToken || isDev) && (!secret || secret.startsWith("0x"))) {
-    // En entorno de desarrollo o con token de prueba, usamos la clave secreta de test oficial de Cloudflare
+    // Si la clave es de producción pero estamos en dev, usamos la clave secreta de test oficial
     secret = "1x0000000000000000000000000000000AA";
   }
 
